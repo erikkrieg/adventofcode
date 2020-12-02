@@ -44,9 +44,3 @@ formatAddends(findAddendsInSet(dataSet, desiredSum, 2))
 
 console.log('\nThree addends:')
 formatAddends(findAddendsInSet(dataSet, desiredSum, 3))
-
-console.log('\nFour addends:')
-formatAddends(findAddendsInSet(dataSet, desiredSum, 4))
-
-console.log('\nFive addends:')
-formatAddends(findAddendsInSet(dataSet, desiredSum, 5))
