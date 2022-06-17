@@ -1,0 +1,7 @@
+# Run NodeJS solution
+js:
+  cat input | node index.js
+# Run Rust solution
+rs:
+  cargo build
+  ./target/debug/day-01
