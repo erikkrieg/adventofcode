@@ -9,6 +9,8 @@ import (
 )
 
 func Day01() {
+	fmt.Println("- Day 01")
+	fmt.Print("  - Part 1: ")
 	file, err := os.Open("input/day-01.txt")
 	if err != nil {
 		log.Fatal(err)
@@ -37,6 +39,5 @@ func Day01() {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Most calories is: ", largestCalorieSum)
-
+	fmt.Print("Most calories is ", largestCalorieSum, "\n")
 }
