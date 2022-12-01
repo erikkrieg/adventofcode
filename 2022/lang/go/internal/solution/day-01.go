@@ -23,6 +23,9 @@ func Day01() {
 	part2(wellStockedElves)
 }
 
+// For fun, this could be better optmized by:
+// 1. Keeping the list sorted when inserting new items
+// 2. Keeping the array at or below the elfLimit parameter
 func elvesWithMostCalories(scanner *bufio.Scanner, elfLimit int) []int {
 	calorieSums := []int{}
 	currentCalorieSum := 0
