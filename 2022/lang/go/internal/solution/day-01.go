@@ -18,44 +18,12 @@ func Day01() {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
-	part1(scanner)
-
-	file, err = os.Open("input/day-01.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-	scanner = bufio.NewScanner(file)
-	part2(scanner)
+	wellStockedElves := elvesWithMostCalories(scanner, 3)
+	part1(wellStockedElves)
+	part2(wellStockedElves)
 }
 
-func part1(scanner *bufio.Scanner) {
-	fmt.Print("  - Part 1: ")
-	currentCalorieSum := 0
-	largestCalorieSum := 0
-	for scanner.Scan() {
-		line := scanner.Text()
-		if line == "" {
-			if currentCalorieSum > largestCalorieSum {
-				largestCalorieSum = currentCalorieSum
-			}
-			currentCalorieSum = 0
-		} else {
-			calories, err := strconv.Atoi(line)
-			if err != nil {
-				log.Fatal(err)
-			}
-			currentCalorieSum += calories
-		}
-	}
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
-	fmt.Print("Most calories is ", largestCalorieSum, "\n")
-}
-
-func part2(scanner *bufio.Scanner) {
-	fmt.Print("  - Part 2: ")
+func elvesWithMostCalories(scanner *bufio.Scanner, elfLimit int) []int {
 	calorieSums := []int{}
 	currentCalorieSum := 0
 	for scanner.Scan() {
@@ -71,8 +39,15 @@ func part2(scanner *bufio.Scanner) {
 			currentCalorieSum += calories
 		}
 	}
-	sort.Ints(calorieSums)
-	elfCount := len(calorieSums)
-	topThree := calorieSums[elfCount-1] + calorieSums[elfCount-2] + calorieSums[elfCount-3]
-	fmt.Print("Sum of calories for top 3 elves is ", topThree, "\n")
+	sort.Sort(sort.Reverse(sort.IntSlice(calorieSums)))
+	return calorieSums[:elfLimit]
+}
+
+func part1(topElves []int) {
+	fmt.Println("  - Part 1: Most calories is ", topElves[0])
+}
+
+func part2(topElves []int) {
+	sum := topElves[0] + topElves[1] + topElves[2]
+	fmt.Println("  - Part 2: Sum of calories for top 3 elves is ", sum)
 }
