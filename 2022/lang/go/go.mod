@@ -1,3 +1,3 @@
-module 2022-day-1
+module github.com/erikkrieg/adventofcode-2022
 
 go 1.18
