@@ -12,6 +12,7 @@ fn main() -> io::Result<()> {
 
     match day {
         1 => solution::day_01::solve()?,
+        2 => solution::day_02::solve()?,
         _ => panic!("Solution not found"),
     };
 
