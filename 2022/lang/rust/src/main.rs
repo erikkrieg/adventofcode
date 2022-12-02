@@ -1,39 +1,19 @@
-use std::collections::BinaryHeap;
-use std::fs::File;
-use std::io::{self, prelude::*, BufReader};
+use std::{env, io};
+
+mod solution;
 
 fn main() -> io::Result<()> {
     println!("Advent of Code 2022");
-    println!("- Day 01");
+    let day = env::args()
+        .nth(1)
+        .unwrap_or_else(|| "0".to_string())
+        .parse::<u8>()
+        .unwrap_or(0);
 
-    let sums = calorie_sums()?;
-
-    // Solve part 1
-    println!("  - Part 1: Most calories is {}", sums.peek().unwrap_or(&0));
-
-    // Solve part 2
-    println!(
-        "  - Part 2: Sum of calories for top 3 elves is {}",
-        sums.iter().take(3).sum::<u32>()
-    );
+    match day {
+        1 => solution::day_01::solve()?,
+        _ => panic!("Solution not found"),
+    };
 
     Ok(())
-}
-
-fn calorie_sums() -> Result<BinaryHeap<u32>, io::Error> {
-    let file = File::open(&"input/day-01.txt")?;
-    let reader = BufReader::new(file);
-    Ok(reader
-        .lines()
-        .into_iter()
-        .fold((0, BinaryHeap::new()), |mut acc, x| {
-            let x = x.unwrap();
-            if x.is_empty() {
-                acc.1.push(acc.0);
-                return (0, acc.1);
-            }
-            acc.0 += x.parse::<u32>().unwrap_or(0);
-            acc
-        })
-        .1)
 }
