@@ -1,3 +1,4 @@
+use std::collections::BinaryHeap;
 use std::fs::File;
 use std::io::{self, prelude::*, BufReader};
 
@@ -5,34 +6,34 @@ fn main() -> io::Result<()> {
     println!("Advent of Code 2022");
     println!("- Day 01");
 
-    let file = File::open(&"input/day-01.txt")?;
-    let reader = BufReader::new(file);
-    let mut calorie_sums = Vec::<u32>::new();
-    let mut current_calorie_sum = 0;
-    for line in reader.lines() {
-        let line = line?;
-        if line.is_empty() {
-            calorie_sums.push(current_calorie_sum);
-            current_calorie_sum = 0;
-        } else {
-            let num = line.parse::<u32>().unwrap();
-            current_calorie_sum += num;
-        }
-    }
-    calorie_sums.sort();
+    let sums = calorie_sums()?;
 
     // Solve part 1
-    println!(
-        "  - Part 1: Most calories is {}",
-        calorie_sums.last().unwrap_or(&0)
-    );
+    println!("  - Part 1: Most calories is {}", sums.peek().unwrap_or(&0));
 
     // Solve part 2
-    let top_sums: u32 = calorie_sums.iter().rev().take(3).sum();
     println!(
         "  - Part 2: Sum of calories for top 3 elves is {}",
-        &top_sums
+        sums.iter().take(3).sum::<u32>()
     );
 
     Ok(())
+}
+
+fn calorie_sums() -> Result<BinaryHeap<u32>, io::Error> {
+    let file = File::open(&"input/day-01.txt")?;
+    let reader = BufReader::new(file);
+    Ok(reader
+        .lines()
+        .into_iter()
+        .fold((0, BinaryHeap::new()), |mut acc, x| {
+            let x = x.unwrap();
+            if x.is_empty() {
+                acc.1.push(acc.0);
+                return (0, acc.1);
+            }
+            acc.0 += x.parse::<u32>().unwrap_or(0);
+            acc
+        })
+        .1)
 }
