@@ -1,7 +1,6 @@
 let
   rust_overlay = import (builtins.fetchTarball https://github.com/oxalica/rust-overlay/archive/master.tar.gz);
   pkgs = import <nixpkgs> { overlays = [ rust_overlay ]; };
-  unstable = import (fetchTarball https://nixos.org/channels/nixos-unstable/nixexprs.tar.xz) {};
 in
   with pkgs;
   mkShell {
