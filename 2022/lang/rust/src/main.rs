@@ -8,7 +8,7 @@ fn main() -> io::Result<()> {
         .nth(1)
         .unwrap_or_else(|| "0".to_string())
         .parse::<u8>()
-        .unwrap_or(0);
+        .expect("Must provide a number for corresponding day");
 
     match day {
         1 => solution::day_01::solve()?,
