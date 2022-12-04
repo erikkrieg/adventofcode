@@ -18,6 +18,8 @@ func main() {
 	switch puzzleDay {
 	case 1:
 		solution.Day01()
+	case 4:
+		solution.Day04()
 	default:
 		log.Fatal("Solution not found: ", puzzleDay)
 	}
