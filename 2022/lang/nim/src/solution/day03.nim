@@ -25,18 +25,15 @@ proc partTwo() =
   var
     line: string
     prioritySum: int
-    i = 0
     group: seq[seq[char]]
   while input.readLine(line):
     group.add(deduplicate(toSeq(line.items)))
-    i += 1
-    if i == 3:
+    if group.len() == 3:
       let match = filter(
         group[0],
         proc(c: char): bool = group[1].contains(c) and group[2].contains(c)
       )
       prioritySum += score(match[0])
-      i = 0
       group = @[]
   echo("  - Part 1: ", prioritySum)
 
