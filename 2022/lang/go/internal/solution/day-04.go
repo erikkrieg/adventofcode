@@ -37,7 +37,7 @@ func Day04() {
 
 		a := assignments[0]
 		b := assignments[1]
-		if (a[0] <= b[0] && a[1] >= b[1]) || (b[0] <= a[0] && b[1] >= a[1]) {
+		if rangeInRange(a, b) || rangeInRange(b, a) {
 			fullOverlapCount += 1
 			partOverlapCount += 1
 		} else if inRange(a[0], b) || inRange(a[1], b) || inRange(b[0], a) || inRange(b[1], a) {
@@ -51,4 +51,8 @@ func Day04() {
 
 func inRange(n int, r []int) bool {
 	return n >= r[0] && n <= r[1]
+}
+
+func rangeInRange(a, b []int) bool {
+	return inRange(a[0], b) && inRange(a[1], b)
 }
