@@ -1,3 +1,5 @@
+#![feature(iter_array_chunks)]
+
 use std::{env, io};
 
 mod solution;
@@ -13,6 +15,7 @@ fn main() -> io::Result<()> {
     match day {
         1 => solution::day_01::solve()?,
         2 => solution::day_02::solve()?,
+        3 => solution::day_03::solve()?,
         _ => panic!("Solution not found"),
     };
 
