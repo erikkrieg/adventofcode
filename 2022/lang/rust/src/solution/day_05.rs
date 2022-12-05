@@ -5,9 +5,9 @@ use std::{fs, io};
 type Stack = Vec<char>;
 type Stacks = Vec<Stack>;
 
-fn stacks_new(initial_state: String) -> Stacks {
+fn parse_stacks(raw_stacks: &str) -> Stacks {
     let mut stacks: Stacks = Vec::new();
-    initial_state.lines().rev().for_each(|row| {
+    raw_stacks.lines().rev().for_each(|row| {
         row.chars()
             .enumerate()
             .filter(|(i, _)| (*i as i32 - 1) % 4 == 0)
@@ -23,20 +23,8 @@ fn stacks_new(initial_state: String) -> Stacks {
     stacks
 }
 
-pub fn solve() -> io::Result<()> {
-    println!("- Day 05");
-
-    let input = fs::read_to_string("input/day-05.txt")?;
-    part_one(&input);
-
-    Ok(())
-}
-
-fn part_one(input: &str) {
-    let splits: Vec<&str> = input.split("\n\n").collect();
-    let mut stacks = stacks_new(splits[0].to_string());
-
-    splits[1]
+fn parse_moves(moves: &str) -> Vec<Vec<usize>> {
+    moves
         .lines()
         .into_iter()
         .map(|m| {
@@ -44,13 +32,30 @@ fn part_one(input: &str) {
                 .filter_map(|word| word.parse::<usize>().ok())
                 .collect::<Vec<usize>>()
         })
-        .for_each(|m| {
-            for _ in 0..m[0] {
-                if let Some(last) = stacks[m[1] - 1].pop() {
-                    stacks[m[2] - 1].push(last);
-                }
+        .collect()
+}
+
+pub fn solve() -> io::Result<()> {
+    println!("- Day 05");
+
+    let input = fs::read_to_string("input/day-05.txt")?;
+    let splits: Vec<&str> = input.split("\n\n").collect();
+    let stacks = parse_stacks(splits[0]);
+    let moves = parse_moves(splits[1]);
+    part_one(stacks, &moves);
+
+    Ok(())
+}
+
+fn part_one(stacks: Stacks, moves: &[Vec<usize>]) {
+    let mut stacks = stacks;
+    moves.iter().for_each(|m| {
+        for _ in 0..m[0] {
+            if let Some(last) = stacks[m[1] - 1].pop() {
+                stacks[m[2] - 1].push(last);
             }
-        });
+        }
+    });
 
     let top = stacks.iter().filter_map(|s| s.last()).collect::<String>();
     println!("  - Part 1: {top}");
