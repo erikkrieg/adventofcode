@@ -14,36 +14,6 @@ impl Top for Stacks {
     }
 }
 
-fn parse_stacks(raw_stacks: &str) -> Stacks {
-    let mut stacks: Stacks = Vec::new();
-    raw_stacks.lines().rev().for_each(|row| {
-        row.chars()
-            .enumerate()
-            .filter(|(i, _)| (*i as i32 - 1) % 4 == 0)
-            .for_each(|(i, c)| {
-                if c.is_uppercase() {
-                    let i = i.div_floor(4);
-                    stacks[i].push(c);
-                } else if c.is_numeric() {
-                    stacks.push(Vec::new());
-                }
-            })
-    });
-    stacks
-}
-
-fn parse_moves(moves: &str) -> Vec<Vec<usize>> {
-    moves
-        .lines()
-        .into_iter()
-        .map(|m| {
-            m.split_whitespace()
-                .filter_map(|word| word.parse::<usize>().ok())
-                .collect::<Vec<usize>>()
-        })
-        .collect()
-}
-
 pub fn solve() -> io::Result<()> {
     println!("- Day 05");
 
@@ -77,4 +47,34 @@ fn part_two(stacks: &Stacks, moves: &[Vec<usize>]) {
         stacks[m[2] - 1].append(&mut move_stacks);
     });
     println!("  - Part 2: {}", stacks.top());
+}
+
+fn parse_stacks(raw_stacks: &str) -> Stacks {
+    let mut stacks: Stacks = Vec::new();
+    raw_stacks.lines().rev().for_each(|row| {
+        row.chars()
+            .enumerate()
+            .filter(|(i, _)| (*i as i32 - 1) % 4 == 0)
+            .for_each(|(i, c)| {
+                if c.is_uppercase() {
+                    let i = i.div_floor(4);
+                    stacks[i].push(c);
+                } else if c.is_numeric() {
+                    stacks.push(Vec::new());
+                }
+            })
+    });
+    stacks
+}
+
+fn parse_moves(moves: &str) -> Vec<Vec<usize>> {
+    moves
+        .lines()
+        .into_iter()
+        .map(|m| {
+            m.split_whitespace()
+                .filter_map(|word| word.parse::<usize>().ok())
+                .collect::<Vec<usize>>()
+        })
+        .collect()
 }
