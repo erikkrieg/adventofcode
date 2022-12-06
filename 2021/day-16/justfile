@@ -1,0 +1,2 @@
+js:
+  cat input | node index.js
