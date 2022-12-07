@@ -17,8 +17,8 @@ in
       rust
       rust-analyzer
       # Nim
-      ## Nimble fails does not appear to work when installed with nix-shell, so
-      ## relying on a non-nix installation for the time being.
+      ## Nimble does not appear to work when installed with nix-shell, so I am
+      ## relying on a non-nix installation for now.
       # nim
       nimlsp
     ];
