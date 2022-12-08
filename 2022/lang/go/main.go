@@ -20,6 +20,8 @@ func main() {
 		solution.Day01()
 	case 4:
 		solution.Day04()
+	case 8:
+		solution.Day08()
 	default:
 		log.Fatal("Solution not found: ", puzzleDay)
 	}
