@@ -5,7 +5,6 @@ pub fn solve() -> io::Result<()> {
     println!("- Day 03");
 
     let file = File::open("input/day-09.txt")?;
-    //part_one(BufReader::new(file));
     part_one(BufReader::new(file));
 
     let file = File::open("input/day-09.txt")?;
