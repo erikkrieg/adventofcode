@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::{self, prelude::*, BufReader};
 
 pub fn solve() -> io::Result<()> {
-    println!("- Day 03");
+    println!("- Day 09");
 
     let file = File::open("input/day-09.txt")?;
     part_one(BufReader::new(file));
