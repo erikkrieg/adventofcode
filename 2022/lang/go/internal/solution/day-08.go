@@ -22,6 +22,7 @@ func Day08() {
 	scanner := bufio.NewScanner(file)
 	trees := parseTrees(scanner)
 	partOne(trees)
+	partTwo(trees)
 }
 
 func partOne(trees [][]int) {
@@ -37,7 +38,61 @@ func partOne(trees [][]int) {
 		viewTreesVertically(x, trees, visibleTrees, true)
 	}
 
-	fmt.Println(len(visibleTrees))
+	fmt.Println("  - Part 1: ", len(visibleTrees))
+}
+
+type Point struct {
+	x int
+	y int
+}
+
+func (p *Point) shift(target *Point) Point {
+	x := p.x
+	if x > target.x {
+		x -= 1
+	} else if x < target.x {
+		x += 1
+	}
+	y := p.y
+	if y > target.y {
+		y -= 1
+	} else if y < target.y {
+		y += 1
+	}
+
+	return Point{x, y}
+}
+
+func sightLine(a Point, b Point, trees [][]int) int {
+	cursor := a
+	cmp := trees[a.y][a.x]
+	line := []int{}
+	for cursor != b {
+		cursor = cursor.shift(&b)
+		tree := trees[cursor.y][cursor.x]
+		line = append(line, tree)
+		if tree >= cmp {
+			break
+		}
+	}
+	return len(line)
+}
+
+func partTwo(trees [][]int) {
+	maxScenicScore := 0
+	for y, row := range trees {
+		for x := range row {
+			lineUp := sightLine(Point{x, y}, Point{x, 0}, trees)
+			lineRight := sightLine(Point{x, y}, Point{len(row) - 1, y}, trees)
+			lineDown := sightLine(Point{x, y}, Point{x, len(trees) - 1}, trees)
+			lineLeft := sightLine(Point{x, y}, Point{0, y}, trees)
+			scenicScore := lineUp * lineDown * lineRight * lineLeft
+			if scenicScore > maxScenicScore {
+				maxScenicScore = scenicScore
+			}
+		}
+	}
+	fmt.Println("  - Part 2: ", maxScenicScore)
 }
 
 func viewTreesHorizontally(rowIndex int, trees [][]int, visibleTrees map[string]Void, reverse bool) {
