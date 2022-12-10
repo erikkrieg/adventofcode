@@ -7,13 +7,15 @@ pub fn solve() -> io::Result<()> {
     println!("- Day 10:");
     let input = File::open("input/day-10.txt")?;
     let reader = BufReader::new(input);
-    part_one(reader)?;
+    let cycles = calculate_cycles(reader);
+    part_one(&cycles);
+    part_two(&cycles);
     Ok(())
 }
 
-fn part_one(reader: BufReader<File>) -> io::Result<()> {
+fn calculate_cycles(commands: BufReader<File>) -> Vec<i32> {
     let (cycles, _): (Vec<i32>, i32) =
-        reader
+        commands
             .lines()
             .filter_map(|l| l.ok())
             .fold((vec![1], 0), |(mut cycles, add), l| {
@@ -28,20 +30,32 @@ fn part_one(reader: BufReader<File>) -> io::Result<()> {
                 };
                 (cycles, add)
             });
+    cycles
+}
+
+fn part_one(cycles: &[i32]) {
     let signal_strength_sum: i32 = cycles
         .iter()
         .enumerate()
         .skip(20)
-        .filter_map(|(i, v)| {
-            if (i as i32 - 20) % 40 == 0 {
-                println!("{i} * {v} = {}", i as i32 * v);
-            }
-            match (i as i32 - 20) % 40 {
-                0 => Some(i as i32 * v),
-                _ => None,
-            }
-        })
+        .step_by(40)
+        .map(|(i, v)| i as i32 * v)
         .sum();
-    println!("{signal_strength_sum}");
-    Ok(())
+    println!("  - Part 1: {signal_strength_sum}");
+}
+
+fn part_two(cycles: &[i32]) {
+    let screen: Vec<String> = cycles
+        .iter()
+        .skip(1)
+        .enumerate()
+        .map(|(i, c)| match (c - 1..=c + 1).contains(&(i as i32 % 40)) {
+            true => "#".to_string(),
+            false => ".".to_string(),
+        })
+        .collect();
+    println!("  - Part 2:");
+    screen
+        .chunks(40)
+        .for_each(|row| println!("{}", &row.join("")));
 }
