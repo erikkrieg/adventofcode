@@ -4,6 +4,23 @@ use std::{
     io::{self, BufRead, BufReader},
 };
 
+pub fn solve() -> io::Result<()> {
+    println!("- Day 04:");
+    let input = File::open("input/day-04.txt")?;
+    let (full_overlap, partial_overlap) = calculate_overlap(BufReader::new(input));
+    part_one(&full_overlap);
+    part_two(&full_overlap, &partial_overlap);
+    Ok(())
+}
+
+fn part_one(full_overlap: &Vec<Overlap>) {
+    println!("  - Part 1: {}", full_overlap.len());
+}
+
+fn part_two(full_overlap: &Vec<Overlap>, partial_overlap: &Vec<Overlap>) {
+    println!("  - Part 2: {}", full_overlap.len() + partial_overlap.len());
+}
+
 enum Overlap {
     Full,
     Partial,
@@ -20,7 +37,7 @@ impl Overlaps for RangeInclusive<i32> {
         let min_range_size = (self.end() - self.start()).min(other.end() - other.start());
         if overlap_size == min_range_size {
             Overlap::Full
-        } else if overlap_size > 0 {
+        } else if overlap_size >= 0 {
             Overlap::Partial
         } else {
             Overlap::None
@@ -28,20 +45,12 @@ impl Overlaps for RangeInclusive<i32> {
     }
 }
 
-pub fn solve() -> io::Result<()> {
-    println!("- Day 04:");
-    let input = File::open("input/day-04.txt")?;
-    part_one(BufReader::new(input));
-    Ok(())
-}
-
-fn part_one(reader: BufReader<File>) {
-    let contained_assignments = reader
+fn calculate_overlap(reader: BufReader<File>) -> (Vec<Overlap>, Vec<Overlap>) {
+    reader
         .lines()
         .filter_map(|l| l.ok())
-        .filter(|line| {
-            let ranges = line
-                .split(',')
+        .map(|line| {
+            line.split(',')
                 .map(|s| {
                     let r = s
                         .split('-')
@@ -49,9 +58,9 @@ fn part_one(reader: BufReader<File>) {
                         .collect::<Vec<i32>>();
                     r[0]..=r[1]
                 })
-                .collect::<Vec<RangeInclusive<i32>>>();
-            matches!(ranges[0].overlaps(&ranges[1]), Overlap::Full)
+                .collect::<Vec<RangeInclusive<i32>>>()
         })
-        .count();
-    println!("  - Part 1: {contained_assignments}");
+        .map(|r| r[0].overlaps(&r[1]))
+        .filter(|o| !matches!(o, Overlap::None))
+        .partition(|o| matches!(o, Overlap::Full))
 }
