@@ -16,6 +16,7 @@ fn main() -> io::Result<()> {
         1 => solution::day_01::solve()?,
         2 => solution::day_02::solve()?,
         3 => solution::day_03::solve()?,
+        4 => solution::day_04::solve()?,
         5 => solution::day_05::solve()?,
         7 => solution::day_07::solve()?,
         9 => solution::day_09::solve()?,
