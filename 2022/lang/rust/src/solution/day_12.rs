@@ -12,15 +12,37 @@ pub fn solve() -> io::Result<()> {
     let height_map = parse_height_map(BufReader::new(input));
     let starting_point = (0, 20);
     let end_point = (148, 20);
-    let distances = find_distances(starting_point, end_point, &height_map);
-    println!("{}", distances.get(&end_point).expect("should find"));
+    part_one(starting_point, end_point, &height_map);
+    part_two(end_point, &height_map);
     Ok(())
+}
+
+fn part_one(start: Point, end: Point, height_map: &HeightMap) {
+    let distances = find_distances(start, height_map, |from, to| to <= from + 1);
+    println!(
+        "  - Part 1: {}",
+        distances.get(&end).expect("End point was not found")
+    );
+}
+
+fn part_two(destination: Point, height_map: &HeightMap) {
+    let shortest = find_distances(destination, height_map, |from, to| from <= to + 1)
+        .iter()
+        .filter(|(p, _)| height_map[p.1][p.0] == 0)
+        .map(|(_, d)| *d)
+        .min()
+        .expect("No points with height 'a' found");
+    println!("  - Part 2: {shortest}");
 }
 
 type HeightMap = Vec<Vec<u8>>;
 type Point = (usize, usize);
 
-fn find_distances(start: Point, end: Point, height_map: &HeightMap) -> HashMap<Point, usize> {
+fn find_distances(
+    start: Point,
+    height_map: &HeightMap,
+    passable: fn(u8, u8) -> bool,
+) -> HashMap<Point, usize> {
     let max = (height_map[0].len() - 1, height_map.len() - 1);
     let mut distance_map = HashMap::new();
     let mut queue: VecDeque<Point> = VecDeque::new();
@@ -40,7 +62,7 @@ fn find_distances(start: Point, end: Point, height_map: &HeightMap) -> HashMap<P
         ]
         .iter()
         .filter(|(x, y)| x <= &max.0 && y <= &max.1)
-        .filter(|point| height_map[point.1][point.0] <= height + 1)
+        .filter(|point| passable(*height, height_map[point.1][point.0]))
         .for_each(|point| {
             let next_dist = *distance + 1;
             if let Some(d) = distance_map.get(point) {
