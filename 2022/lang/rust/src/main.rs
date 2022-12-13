@@ -21,6 +21,8 @@ fn main() -> io::Result<()> {
         7 => solution::day_07::solve()?,
         9 => solution::day_09::solve()?,
         10 => solution::day_10::solve()?,
+        11 => solution::day_11::solve()?,
+        12 => solution::day_12::solve()?,
         _ => panic!("Solution not found"),
     };
 
