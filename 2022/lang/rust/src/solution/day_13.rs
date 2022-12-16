@@ -54,28 +54,20 @@ enum Token {
 }
 
 impl Token {
-    fn compare(&self, rhs: &Token) -> Ordering {
-        if matches!(self, Token::Int(_)) && matches!(rhs, Token::Int(_)) {
-            let Token::Int(lhs) = self else { todo!() };
-            let Token::Int(rhs) = rhs else { todo!() };
-            lhs.cmp(rhs)
-        } else if matches!(self, Token::List(_)) && matches!(rhs, Token::List(_)) {
-            let Token::List(lhs) = self else { todo!() };
-            let Token::List(rhs) = rhs else { todo!() };
-            lhs.iter()
+    fn compare(&self, other: &Token) -> Ordering {
+        match (self, other) {
+            (Token::List(lhs), Token::List(rhs)) => lhs
+                .iter()
                 .zip(rhs.iter())
                 .find_map(|(a, b)| match a.compare(b) {
                     Ordering::Greater => Some(Ordering::Greater),
                     Ordering::Equal => None,
                     Ordering::Less => Some(Ordering::Less),
                 })
-                .unwrap_or_else(|| lhs.len().cmp(&rhs.len()))
-        } else if let Token::Int(i) = self {
-            Token::List(vec![Token::Int(*i)]).compare(rhs)
-        } else if let Token::Int(i) = rhs {
-            self.compare(&Token::List(vec![Token::Int(*i)]))
-        } else {
-            panic!("This shouldn't happen");
+                .unwrap_or_else(|| lhs.len().cmp(&rhs.len())),
+            (Token::Int(lhs), Token::Int(rhs)) => lhs.cmp(rhs),
+            (Token::Int(i), Token::List(_)) => Token::List(vec![Token::Int(*i)]).compare(other),
+            (Token::List(_), Token::Int(i)) => self.compare(&Token::List(vec![Token::Int(*i)])),
         }
     }
 }
