@@ -106,7 +106,7 @@ fn as_token(raw: &str) -> Token {
 }
 
 fn test() {
-    let signals: Vec<Token> = "
+    let mut signals: Vec<Token> = "
         [1,1,3,1,1]
         [1,1,5,1,1]
 
@@ -125,11 +125,8 @@ fn test() {
         []
         [3]
 
-        [[7,0,7,[4,[7,7],[2,1,9,6],8],10],[],[]]
-        []
-
-        [[[10],3,[],1,4],[1,7,[1,[9,1],[5,0]],[[],10],2],[[8],[0,[2,4,2,5],[7,3]],6],[[2,[8,4]],[8,[6,7,6,2]],1,1,[1,3]],[2,0,6]]
-        [[],[[]],[],[0,10,[9,0,7],[3,9]],[]]
+        [[6]]
+        [[2]]
 
         [[[]]]
         [[]]
@@ -144,4 +141,6 @@ fn test() {
         .collect();
     let sum = unordered_signals(&signals);
     println!("  - Part 0: {sum}");
+    signals.sort_by(|a, b| a.compare(b));
+    signals.iter().for_each(|s| println!("{s:?}"));
 }
