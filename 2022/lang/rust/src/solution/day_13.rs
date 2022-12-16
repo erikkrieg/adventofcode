@@ -6,31 +6,45 @@ use std::{
 
 pub fn solve() -> io::Result<()> {
     let input = File::open("input/day-13.txt")?;
-    test();
-    part_one(BufReader::new(input));
+    let mut signals = parse_signals(BufReader::new(input));
+    part_one(&signals);
+    part_two(&mut signals);
     Ok(())
 }
 
-fn part_one(reader: BufReader<File>) {
-    let signals: Vec<Token> = reader
+fn parse_signals(reader: BufReader<File>) -> Vec<Token> {
+    reader
         .lines()
         .filter_map(|l| l.ok())
         .filter(|line| !line.is_empty())
         .map(|l| as_token(&l))
-        .collect();
-    let sum = unordered_signals(&signals);
-    println!("  - Part 1: {sum}");
+        .collect()
 }
 
-fn unordered_signals(signals: &[Token]) -> usize {
-    signals
+fn part_one(signals: &[Token]) {
+    let sum: usize = signals
         .array_chunks::<2>()
         .enumerate()
         .filter_map(|(i, [a, b])| match a.compare(b) {
             Ordering::Greater => None,
             _ => Some(i + 1),
         })
-        .sum()
+        .sum();
+    println!("  - Part 1: {sum}");
+}
+
+fn part_two(signals: &mut Vec<Token>) {
+    signals.push(as_token("[[2]]"));
+    signals.push(as_token("[[6]]"));
+    signals.sort_by(|a, b| a.compare(b));
+    let mut si = signals.iter().enumerate();
+    let (start, _) = si
+        .find(|(_, s)| matches!(s.compare(&as_token("[[2]]")), Ordering::Equal))
+        .expect("Start tracer wasn't found");
+    let (end, _) = si
+        .find(|(_, s)| matches!(s.compare(&as_token("[[6]]")), Ordering::Equal))
+        .expect("End tracer wasn't found");
+    println!("  - Part 2: {}", (start + 1) * (end + 1));
 }
 
 #[derive(Debug)]
@@ -66,6 +80,8 @@ impl Token {
     }
 }
 
+// There is actually a bug with this where some list tokens are nested in an
+// additional list that interestingly doesn't affect the comparisons.
 fn as_token(raw: &str) -> Token {
     if let Ok(i) = raw.parse() {
         return Token::Int(i);
@@ -103,44 +119,4 @@ fn as_token(raw: &str) -> Token {
         }
     }
     Token::List(tokens)
-}
-
-fn test() {
-    let mut signals: Vec<Token> = "
-        [1,1,3,1,1]
-        [1,1,5,1,1]
-
-        [[1],[2,3,4]]
-        [[1],4]
-
-        [9]
-        [[8,7,6]]
-
-        [[4,4],4,4]
-        [[4,4],4,4,4]
-
-        [7,7,7,7]
-        [7,7,7]
-
-        []
-        [3]
-
-        [[6]]
-        [[2]]
-
-        [[[]]]
-        [[]]
-
-        [1,[2,[3,[4,[5,6,7]]]],8,9]
-        [1,[2,[3,[4,[5,6,0]]]],8,9]"
-        .to_string()
-        .lines()
-        .map(|l| l.trim())
-        .filter(|l| !l.is_empty())
-        .map(as_token)
-        .collect();
-    let sum = unordered_signals(&signals);
-    println!("  - Part 0: {sum}");
-    signals.sort_by(|a, b| a.compare(b));
-    signals.iter().for_each(|s| println!("{s:?}"));
 }
