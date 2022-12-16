@@ -1,4 +1,4 @@
-#![feature(iter_array_chunks, int_roundings)]
+#![feature(array_chunks, iter_array_chunks, int_roundings)]
 
 use std::{env, io};
 
@@ -23,6 +23,7 @@ fn main() -> io::Result<()> {
         10 => solution::day_10::solve()?,
         11 => solution::day_11::solve()?,
         12 => solution::day_12::solve()?,
+        13 => solution::day_13::solve()?,
         _ => panic!("Solution not found"),
     };
 
