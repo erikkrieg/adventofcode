@@ -4,23 +4,15 @@ use std::{
     io::{self, BufRead, BufReader},
 };
 
-pub fn solve() -> io::Result<()> {
-    println!("- Day 14:");
-    let input = File::open("input/day-14.txt")?;
-    //let input = File::open("input/sample-14.txt")?;
-    part_one(BufReader::new(input));
-    Ok(())
-}
-
 type Point = (usize, usize);
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum Cell {
     Sand,
     Rock,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Bounds {
     max_x: usize,
     min_x: usize,
@@ -52,21 +44,23 @@ fn simulate(source: Point, bounds: Bounds, cells: HashMap<Point, Cell>) -> usize
             cursor = next_right;
         } else {
             cells.insert(cursor, Cell::Sand);
+            if cursor == source {
+                break;
+            }
             cursor = source;
         }
     }
     cells.len() - rock_count
 }
 
-fn part_one(reader: BufReader<File>) {
-    let pouring_point = (500, 0);
+fn parse_cells(reader: BufReader<File>) -> (Bounds, HashMap<Point, Cell>) {
     let mut bounds = Bounds {
         max_x: 500,
         min_x: 500,
         min_y: 0,
         max_y: 0,
     };
-    let cell_map =
+    let cells =
         reader
             .lines()
             .filter_map(|l| l.ok())
@@ -97,6 +91,34 @@ fn part_one(reader: BufReader<File>) {
                         m
                     })
             });
-    let sand_count = simulate(pouring_point, bounds, cell_map);
+    (bounds, cells)
+}
+
+pub fn solve() -> io::Result<()> {
+    println!("- Day 14:");
+    let input = File::open("input/day-14.txt")?;
+    let (bounds, cells) = parse_cells(BufReader::new(input));
+    part_one(bounds.clone(), cells.clone());
+    part_two(bounds, cells);
+    Ok(())
+}
+
+fn part_one(bounds: Bounds, cells: HashMap<Point, Cell>) {
+    let pouring_point = (500, 0);
+    let sand_count = simulate(pouring_point, bounds, cells);
     println!("  - Part 1: {sand_count}");
+}
+
+fn part_two(bounds: Bounds, cells: HashMap<Point, Cell>) {
+    let mut cells = cells;
+    let mut bounds = bounds;
+    let pouring_point = (500, 0);
+    bounds.min_x = 250;
+    bounds.max_x = 750;
+    bounds.max_y += 2;
+    for x in bounds.min_x..=bounds.max_x {
+        cells.insert((x, bounds.max_y), Cell::Rock);
+    }
+    let sand_count = simulate(pouring_point, bounds, cells);
+    println!("  - Part 2: {sand_count}");
 }
