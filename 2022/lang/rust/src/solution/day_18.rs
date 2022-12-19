@@ -1,10 +1,10 @@
 use std::{
-    collections::HashSet,
+    collections::{HashSet, VecDeque},
     fs::File,
     io::{self, BufRead, BufReader},
 };
 
-#[derive(Debug, Eq, PartialEq, Hash)]
+#[derive(Debug, Eq, PartialEq, Hash, Clone)]
 struct Cube {
     x: i32,
     y: i32,
@@ -46,11 +46,54 @@ fn parse_cubes(reader: BufReader<File>) -> HashSet<Cube> {
         })
 }
 
+fn measure_exterior(cubes: &HashSet<Cube>) -> usize {
+    let origin = cubes.iter().min_by_key(|c| c.z).unwrap().shift(0, 0, -1);
+    let mut checked = HashSet::new();
+    let mut perimeter = HashSet::new();
+    let mut queue = VecDeque::from([origin]);
+    while let Some(queued_cube) = queue.pop_front() {
+        if checked.contains(&queued_cube) {
+            continue;
+        }
+        checked.insert(queued_cube.clone());
+        // Seach adjacent cubes of adjacent cubes to better creep along the
+        // more extreme edges.
+        let adjacent_cubes = queued_cube
+            .adjacent()
+            .iter()
+            .filter(|c| !cubes.contains(c))
+            .fold(Vec::new(), |mut v, c| {
+                let mut adj = c
+                    .adjacent()
+                    .iter()
+                    .filter(|c| !cubes.contains(c))
+                    .cloned()
+                    .collect();
+                v.append(&mut adj);
+                v.push(c.clone());
+                v
+            });
+        let mut queue_next: VecDeque<Cube> = adjacent_cubes
+            .iter()
+            .filter(|c| c.adjacent().iter().any(|a| cubes.contains(a)))
+            .cloned()
+            .collect();
+        if !queue_next.is_empty() {
+            perimeter.insert(queued_cube.clone());
+            queue.append(&mut queue_next);
+        }
+    }
+    perimeter.iter().fold(0, |area, c| {
+        area + c.adjacent().iter().filter(|c| cubes.contains(c)).count()
+    })
+}
+
 pub fn solve() -> io::Result<()> {
     println!("- Day 18:");
     let input = File::open("input/day-18.txt")?;
     let cubes = parse_cubes(BufReader::new(input));
     part_one(&cubes);
+    part_two(&cubes);
     Ok(())
 }
 
@@ -63,4 +106,9 @@ fn part_one(cubes: &HashSet<Cube>) {
             .count()
     });
     println!("  - Part 1: {lava_surface_area}");
+}
+
+fn part_two(cubes: &HashSet<Cube>) {
+    let perimeter = measure_exterior(cubes);
+    println!("  - Part 2: {perimeter}");
 }
