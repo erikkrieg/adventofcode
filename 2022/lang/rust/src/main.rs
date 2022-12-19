@@ -1,4 +1,4 @@
-#![feature(array_chunks, iter_array_chunks, int_roundings)]
+#![feature(array_chunks, drain_filter, iter_array_chunks, int_roundings)]
 
 use std::{env, io};
 
