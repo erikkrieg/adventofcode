@@ -108,28 +108,27 @@ enum Action {
     BuyGeodeBot,
 }
 
-// TODO: The simulation needs to test different combinations.
-// Consider creating a RecursiveSimulation.
 fn simulate(bp: &Blueprint, duration: usize) -> usize {
     let mut sims = VecDeque::from([SimulationState::new()]);
     let mut max_geode_count = 0;
     while let Some(mut state) = sims.pop_front() {
         if state.minutes_passed == duration
-            || (state.minutes_passed > 18 && state.obsidian_robots < 1)
-            || (state.minutes_passed > 23 && state.geode_robots < 1)
-            // Pruning sims that have waited too much. Values tuned with
-            // trial and error (mostly error).
-            || (state.ore_robots + state.clay_robots + state.obsidian_robots + state.geode_robots) + 1 < state.minutes_passed.div_floor(2)
+            || (state.ore_robots + state.clay_robots + state.obsidian_robots + state.geode_robots)
+                + 1
+                < state.minutes_passed.div_floor(2)
         {
-            // Useful to compare with the sample from the puzzle description
-            //if state.geode_count > max_geode_count {
-            //    println!("{state:?}");
-            //}
+            /*if state.minutes_passed == duration && state.geode_count > max_geode_count {
+                println!("{state:?}");
+            }*/
             max_geode_count = max_geode_count.max(state.geode_count);
             continue;
         }
-        // Determine possible actions
+
         use Action::*;
+        let next_ore = state.ore_count + state.ore_robots;
+        let next_clay = state.clay_count + state.clay_robots;
+        let next_obsidian = state.obsidian_count + state.obsidian_robots;
+        let next_geode = state.geode_count + state.geode_robots;
         let mut available_actions = Vec::new();
         if state.ore_count >= bp.geode_robot.ore && state.obsidian_count >= bp.geode_robot.obsidian
         {
@@ -137,9 +136,15 @@ fn simulate(bp: &Blueprint, duration: usize) -> usize {
         } else if state.ore_count >= bp.obsidian_robot.ore
             && state.clay_count >= bp.obsidian_robot.clay
         {
+            if next_ore >= bp.geode_robot.ore && next_obsidian >= bp.geode_robot.obsidian {
+                available_actions.push(Wait);
+            }
             available_actions.push(BuyObsidianBot);
-            // testing to see if waiting 50% of the time helps
-            available_actions.push(Wait);
+            if state.ore_count >= bp.clay_robot.ore
+                && state.clay_robots < bp.max_clay_cost().div_floor(2)
+            {
+                available_actions.push(BuyClayBot);
+            }
         } else {
             if state.ore_count >= bp.ore_robot.ore && state.ore_robots < bp.max_ore_cost() {
                 available_actions.push(BuyOreBot);
@@ -151,10 +156,10 @@ fn simulate(bp: &Blueprint, duration: usize) -> usize {
         }
 
         // update state
-        state.ore_count += state.ore_robots;
-        state.clay_count += state.clay_robots;
-        state.obsidian_count += state.obsidian_robots;
-        state.geode_count += state.geode_robots;
+        state.ore_count = next_ore;
+        state.clay_count = next_clay;
+        state.obsidian_count = next_obsidian;
+        state.geode_count = next_geode;
         state.minutes_passed += 1;
 
         available_actions.iter().for_each(|a| match a {
@@ -189,7 +194,7 @@ fn simulate(bp: &Blueprint, duration: usize) -> usize {
             }
         });
     }
-    //println!("{max_geode_count}");
+    println!("{max_geode_count}");
     max_geode_count
 }
 
@@ -213,11 +218,6 @@ fn part_one(blueprints: &[Blueprint]) {
     println!("  - Part 1: {quality_level_sum}");
 }
 
-// TODO: The simulation at time of this commit doesn't actually solve the sample input.
-// It gets 54 instead of 56 for the first blueprint. After a bit of tweaks I did
-// feel it was worth a shot to see if I might get lucky with my sims and find the
-// best values and sure enough I was. I want to keep this mess as a reference, but
-// would like to fix and refactor heavily.
 fn part_two(blueprints: &[Blueprint]) {
     let duration = 32;
     let product: usize = blueprints
