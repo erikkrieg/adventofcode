@@ -211,8 +211,14 @@ pub fn solve() -> io::Result<()> {
     println!("- Day 19:");
     let input = File::open("input/day-19.txt")?;
     let blueprints = parse_blueprints(BufReader::new(input));
-    part_one(&blueprints);
-    part_two(&blueprints);
+    let bp1 = blueprints.clone();
+    let handlers = vec![
+        thread::spawn(move || part_one(&bp1)),
+        thread::spawn(move || part_two(&blueprints)),
+    ];
+    handlers
+        .into_iter()
+        .for_each(|h| h.join().expect("Part of problem failed"));
     Ok(())
 }
 
