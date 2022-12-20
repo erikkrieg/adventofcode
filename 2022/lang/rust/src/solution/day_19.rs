@@ -1,5 +1,5 @@
 use std::{
-    collections::VecDeque,
+    collections::{HashMap, VecDeque},
     fs::File,
     io::{self, BufRead, BufReader},
 };
@@ -25,15 +25,10 @@ impl Blueprint {
         .unwrap()
     }
     fn max_clay_cost(&self) -> usize {
-        *[
-            self.ore_robot.clay,
-            self.clay_robot.clay,
-            self.obsidian_robot.clay,
-            self.geode_robot.clay,
-        ]
-        .iter()
-        .max()
-        .unwrap()
+        self.obsidian_robot.clay
+    }
+    fn max_obsidian_cost(&self) -> usize {
+        self.geode_robot.obsidian
     }
 }
 
@@ -110,20 +105,31 @@ enum Action {
 
 fn simulate(bp: &Blueprint, duration: usize) -> usize {
     let mut sims = VecDeque::from([SimulationState::new()]);
-    let mut max_geode_count = 0;
+    let mut max_geode_at_time: HashMap<usize, usize> = HashMap::new();
+    let performance_cutoff_margin = 2;
     while let Some(mut state) = sims.pop_front() {
+        // Check performance of a simulation by looking comparing geodes counts
+        // with other sims as well as looking at the ratio of bots to time, which
+        // can help prune sims that have waited too much.
+        if let Some(max_geodes) = max_geode_at_time.get_mut(&state.minutes_passed) {
+            if &state.geode_count > max_geodes {
+                *max_geodes = state.geode_count;
+            } else if &(state.geode_count + performance_cutoff_margin) < max_geodes {
+                continue;
+            }
+        } else {
+            max_geode_at_time.insert(state.minutes_passed, state.geode_count);
+        }
         if state.minutes_passed == duration
             || (state.ore_robots + state.clay_robots + state.obsidian_robots + state.geode_robots)
                 + 1
                 < state.minutes_passed.div_floor(2)
         {
-            /*if state.minutes_passed == duration && state.geode_count > max_geode_count {
-                println!("{state:?}");
-            }*/
-            max_geode_count = max_geode_count.max(state.geode_count);
             continue;
         }
 
+        // Given the current resources and robot counts try to only simulate
+        // possible actions that might lead to a performant simulation.
         use Action::*;
         let next_ore = state.ore_count + state.ore_robots;
         let next_clay = state.clay_count + state.clay_robots;
@@ -135,6 +141,7 @@ fn simulate(bp: &Blueprint, duration: usize) -> usize {
             available_actions.push(BuyGeodeBot);
         } else if state.ore_count >= bp.obsidian_robot.ore
             && state.clay_count >= bp.obsidian_robot.clay
+            && state.obsidian_robots < bp.max_obsidian_cost()
         {
             if next_ore >= bp.geode_robot.ore && next_obsidian >= bp.geode_robot.obsidian {
                 available_actions.push(Wait);
@@ -155,7 +162,6 @@ fn simulate(bp: &Blueprint, duration: usize) -> usize {
             available_actions.push(Wait);
         }
 
-        // update state
         state.ore_count = next_ore;
         state.clay_count = next_clay;
         state.obsidian_count = next_obsidian;
@@ -194,14 +200,15 @@ fn simulate(bp: &Blueprint, duration: usize) -> usize {
             }
         });
     }
-    println!("{max_geode_count}");
+    let max_geode_count = *max_geode_at_time
+        .get(&duration)
+        .expect("Missing value for last minute of simulation");
     max_geode_count
 }
 
 pub fn solve() -> io::Result<()> {
     println!("- Day 19:");
     let input = File::open("input/day-19.txt")?;
-    //let input = File::open("input/sample-19.txt")?;
     let blueprints = parse_blueprints(BufReader::new(input));
     part_one(&blueprints);
     part_two(&blueprints);
