@@ -2,9 +2,10 @@ use std::{
     collections::{HashMap, VecDeque},
     fs::File,
     io::{self, BufRead, BufReader},
+    thread::{self, JoinHandle},
 };
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Blueprint {
     ore_robot: Cost,
     clay_robot: Cost,
@@ -32,7 +33,7 @@ impl Blueprint {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Cost {
     ore: usize,
     clay: usize,
@@ -216,21 +217,31 @@ pub fn solve() -> io::Result<()> {
 }
 
 fn part_one(blueprints: &[Blueprint]) {
-    let duration = 24;
     let quality_level_sum: usize = blueprints
         .iter()
+        .map(|b| {
+            let b = b.clone();
+            thread::spawn(move || simulate(&b, 24))
+        })
+        .collect::<Vec<JoinHandle<usize>>>()
+        .into_iter()
         .enumerate()
-        .map(|(i, b)| (i + 1) * simulate(b, duration))
+        .map(|(i, h)| (i + 1) * h.join().unwrap())
         .sum();
     println!("  - Part 1: {quality_level_sum}");
 }
 
 fn part_two(blueprints: &[Blueprint]) {
-    let duration = 32;
     let product: usize = blueprints
         .iter()
         .take(3)
-        .map(|b| simulate(b, duration))
+        .map(|b| {
+            let b = b.clone();
+            thread::spawn(move || simulate(&b, 32))
+        })
+        .collect::<Vec<JoinHandle<usize>>>()
+        .into_iter()
+        .map(|h| h.join().unwrap())
         .product();
     println!("  - Part 2: {product}");
 }
