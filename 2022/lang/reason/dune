@@ -1,0 +1,3 @@
+(executable
+  (name aoc_2022)
+  (public_name aoc_2022))

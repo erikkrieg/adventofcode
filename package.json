@@ -1,0 +1,22 @@
+{
+  "name": "adventofcode",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "esy": "esy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erikkrieg/adventofcode.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/erikkrieg/adventofcode/issues"
+  },
+  "homepage": "https://github.com/erikkrieg/adventofcode#readme",
+  "dependencies": {
+    "esy": "^0.6.12"
+  }
+}

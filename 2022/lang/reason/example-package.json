@@ -1,0 +1,31 @@
+{
+  "name": "aoc-2022",
+  "version": "0.1.0",
+  "description": "Advent of Code solutions in native Reason",
+  "license": "MIT",
+  "esy": {
+    "build": "dune build -p #{self.name}",
+    "buildDev": "dune build --promote-install-files --root . --only-package #{self.name}",
+    "NOTE": "Optional release Section. Customizes result of `esy release`",
+    "release": {
+      "rewritePrefix": true,
+      "bin": [
+        "aoc2022"
+      ]
+    },
+    "buildEnv": {
+      "ODOC_SYNTAX": "re"
+    }
+  },
+  "scripts": {
+    "format": "esy dune build @fmt --auto-promote",
+  },
+  "dependencies": {
+    "@opam/dune": "*",
+    "@opam/reason": "*",
+    "ocaml": "4.12.x"
+  },
+  "devDependencies": {
+    "@opam/ocaml-lsp-server": "*",
+  }
+}

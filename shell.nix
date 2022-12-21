@@ -21,6 +21,10 @@ in
       ## relying on a non-nix installation for now.
       # nim
       nimlsp
+      # ReasonML
+      ## Node is used to get npm, which installs `esy`, the package manager
+      ## I'm using for Reason.
+      nodejs-19_x
     ];
   }
 

@@ -1,0 +1,12 @@
+{
+  "esy": {
+    "build": "dune build -p aoc_2022"
+  },
+  "scripts": {
+    "run": "esy x aoc_2022"
+  },
+  "dependencies": {
+    "ocaml": "4.10.x",
+    "@opam/dune": "*"
+  }
+}
