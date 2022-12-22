@@ -1,12 +1,18 @@
 {
+  "name": "aoc_2022",
   "esy": {
-    "build": "dune build -p aoc_2022"
+    "build": "dune build -p #{self.name}"
   },
   "scripts": {
-    "run": "esy x aoc_2022"
+    "run": "esy x #{self.name}"
   },
   "dependencies": {
-    "ocaml": "4.10.x",
-    "@opam/dune": "*"
+    "ocaml": "4.14.x",
+    "@opam/dune": "*",
+    "@opam/reason": "*"
+  },
+   "devDependencies": {
+    "@opam/ocaml-lsp-server": "*",
+    "@opam/merlin": "*"
   }
 }
