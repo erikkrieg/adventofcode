@@ -1,11 +1,11 @@
 # AoC 2022 - ReasonML 
 
-Run solutions with [`esy`](https://github.com/esy/esy) like so:
+As I understand it, [Reason](https://reasonml.github.io/docs/en/what-and-why) is a sort of alternative syntax for OCaml that can be compiled to natively binary using OCaml's standard library and ecosystem, _or_ it can be transpiled to JavaScript (Node or browser JS).
+
+Run solutions natively with [`esy`](https://github.com/esy/esy) by passing the date like so:
 
 ```
 esy run 1
 ```
-
-Provide an integer to specify the day to run the puzzle solution for.
 
 _This will install the dependencies required to compile the native binary._
