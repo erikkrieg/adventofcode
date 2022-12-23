@@ -1,6 +1,6 @@
 # AoC 2022 - ReasonML 
 
-Run solutions using `esy` with like so:
+Run solutions with [`esy`](https://github.com/esy/esy) like so:
 
 ```
 esy run 1
