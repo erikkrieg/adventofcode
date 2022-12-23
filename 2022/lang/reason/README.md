@@ -9,3 +9,17 @@ esy run 1
 ```
 
 _This will install the dependencies required to compile the native binary._
+
+## Project structure
+
+Follows conventions of the [Dune build system](https://dune.readthedocs.io/en/latest/index.html):
+```
+# Contains the entry point and handling of the date input
+bin/
+
+# Contains solutions for each day
+lib/
+
+# Symlink to puzzle inputs for the year
+input/
+```
