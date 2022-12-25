@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::{self, prelude::*, BufReader};
 
-use advent::grid::Point;
+use advent::grid::point::Point;
 
 pub fn solve() -> io::Result<()> {
     println!("- Day 09");
