@@ -18,6 +18,8 @@ func main() {
 	switch puzzleDay {
 	case 1:
 		solution.Day01()
+	case 3:
+		solution.Day03()
 	case 4:
 		solution.Day04()
 	case 8:
