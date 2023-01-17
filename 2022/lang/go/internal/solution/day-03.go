@@ -59,16 +59,14 @@ func priority(r rune) int {
 }
 
 func firstCommonChar(arr []string) (rune, error) {
+chars:
 	for _, r := range arr[0] {
-		occurances := 1
 		for _, s := range arr[1:] {
-			if strings.ContainsRune(s, r) {
-				occurances += 1
+			if !strings.ContainsRune(s, r) {
+				continue chars
 			}
 		}
-		if occurances == len(arr) {
-			return r, nil
-		}
+		return r, nil
 	}
 	return ' ', errors.New("no common character shared among strings")
 }
