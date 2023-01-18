@@ -1,4 +1,3 @@
-use std::collections::HashSet;
 use std::fs::File;
 use std::io::{self, prelude::*, BufReader};
 
@@ -14,34 +13,39 @@ pub fn solve() -> io::Result<()> {
     Ok(())
 }
 
+fn lines(reader: BufReader<File>) -> impl Iterator<Item = String> {
+    reader.lines().into_iter().filter_map(|line| line.ok())
+}
+
 fn part_one(reader: BufReader<File>) {
-    let priority_sum = reader
-        .lines()
-        .into_iter()
-        .filter_map(|r| r.ok())
-        .fold(0, |mut acc, x| {
-            let a: HashSet<char> = x[0..x.len() / 2].chars().collect();
-            let b: HashSet<char> = x[x.len() / 2..].chars().collect();
-            for i in a.intersection(&b) {
-                acc += score(i);
-            }
-            acc
-        });
+    let priority_sum = lines(reader).fold(0, |acc, x| {
+        let mid = x.len() / 2;
+        acc + score(
+            &first_common_char(&[&x[0..mid], &x[mid..]]).expect("No common character was found"),
+        )
+    });
     println!("  - Part 1: {priority_sum}");
 }
 
 fn part_two(reader: BufReader<File>) {
     let mut priority_sum = 0;
-    let iter = reader.lines().into_iter().filter_map(|r| r.ok());
+    let iter = lines(reader);
     for arr in iter.array_chunks::<3>() {
-        let sets: Vec<HashSet<char>> = arr.iter().map(|x| x.chars().collect()).collect();
-        for i in sets[0].intersection(&sets[1]) {
-            if sets[2].contains(i) {
-                priority_sum += score(i)
-            }
-        }
+        let group = arr.iter().map(|s| s.as_str()).collect::<Vec<&str>>();
+        priority_sum += score(&first_common_char(&group).expect("No common character was found"))
     }
     println!("  - Part 2: {priority_sum}");
+}
+
+fn first_common_char(strs: &[&str]) -> Option<char> {
+    match strs {
+        [first] => first.chars().next(),
+        [first, rest @ ..] => first
+            .chars()
+            .into_iter()
+            .find(|&c| rest.iter().all(|r| r.contains(c))),
+        _ => None,
+    }
 }
 
 fn score(c: &char) -> u32 {
