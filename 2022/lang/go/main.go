@@ -22,6 +22,8 @@ func main() {
 		solution.Day03()
 	case 4:
 		solution.Day04()
+	case 5:
+		solution.Day05()
 	case 8:
 		solution.Day08()
 	default:
