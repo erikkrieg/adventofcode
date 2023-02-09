@@ -15,7 +15,11 @@ func Day05() {
 	for _, m := range moves {
 		doMove(stacks, &m)
 	}
-	fmt.Println(stacks, moves)
+	for _, stack := range stacks {
+		fmt.Print(stack[len(stack)-1])
+	}
+	// Empty line for cleaner stdout
+	fmt.Println()
 }
 
 type Move struct {
