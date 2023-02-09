@@ -46,12 +46,19 @@ func parse_inputs() ([]Stack, []Move) {
 }
 
 func parse_stacks(input string) []Stack {
-	// Mocking parsing of stacks to build movement logic first.
-	return []Stack{
-		{"Z", "N"},
-		{"M", "C", "D"},
-		{"P"},
+	re := regexp.MustCompile("[A-Z]{1}")
+	lines := strings.Split(input, "\n")
+	stacks := make([]Stack, (len(lines[0])+1)/4)
+	for _, line := range lines {
+		for i := 1; i < len(line)-1; i += 4 {
+			crate := line[i : i+1]
+			stackIndex := i / 4
+			if re.MatchString(crate) {
+				stacks[stackIndex] = append(Stack{crate}, stacks[stackIndex]...)
+			}
+		}
 	}
+	return stacks
 }
 
 func parse_moves(input string) []Move {
