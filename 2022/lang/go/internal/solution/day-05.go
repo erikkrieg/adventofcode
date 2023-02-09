@@ -11,7 +11,7 @@ import (
 
 func Day05() {
 	fmt.Println("- Day 05")
-	stacks, moves := parse_inputs()
+	stacks, moves := parse_inputs("input/day-05.txt")
 	for _, m := range moves {
 		doMove(stacks, &m)
 	}
@@ -38,8 +38,8 @@ func doMove(s []Stack, m *Move) {
 	}
 }
 
-func parse_inputs() ([]Stack, []Move) {
-	contents, err := ioutil.ReadFile("input/test-05.txt")
+func parse_inputs(path string) ([]Stack, []Move) {
+	contents, err := ioutil.ReadFile(path)
 	if err != nil {
 		log.Fatal(err)
 	}
