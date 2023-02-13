@@ -12,13 +12,27 @@ import (
 func Day05() {
 	fmt.Println("- Day 05")
 	stacks, moves := parse_inputs("input/day-05.txt")
+	day05Part1(copyStacks(stacks), moves)
+	day05Part2(stacks, moves)
+}
+
+func day05Part1(stacks []Stack, moves []Move) {
 	for _, m := range moves {
-		doMove(stacks, &m)
+		doMove(stacks, &m, false)
 	}
 	for _, stack := range stacks {
 		fmt.Print(stack[len(stack)-1])
 	}
-	// Empty line for cleaner stdout
+	fmt.Println()
+}
+
+func day05Part2(stacks []Stack, moves []Move) {
+	for _, m := range moves {
+		doMove(stacks, &m, true)
+	}
+	for _, stack := range stacks {
+		fmt.Print(stack[len(stack)-1])
+	}
 	fmt.Println()
 }
 
@@ -30,10 +44,16 @@ type Move struct {
 type Crate = string
 type Stack = []Crate
 
-func doMove(s []Stack, m *Move) {
-	for i := 0; i < m.quantity; i++ {
-		end := len(s[m.from]) - 1
-		s[m.to] = append(s[m.to], s[m.from][end])
+func doMove(s []Stack, m *Move, batch bool) {
+	if !batch {
+		for i := 0; i < m.quantity; i++ {
+			end := len(s[m.from]) - 1
+			s[m.to] = append(s[m.to], s[m.from][end])
+			s[m.from] = s[m.from][:end]
+		}
+	} else {
+		end := len(s[m.from]) - m.quantity
+		s[m.to] = append(s[m.to], s[m.from][end:]...)
 		s[m.from] = s[m.from][:end]
 	}
 }
@@ -63,6 +83,15 @@ func parse_stacks(input string) []Stack {
 		}
 	}
 	return stacks
+}
+
+func copyStacks(stacks []Stack) []Stack {
+	clone := make([]Stack, len(stacks))
+	for i, stack := range stacks {
+		clone[i] = make(Stack, len(stack))
+		copy(clone[i], stack)
+	}
+	return clone
 }
 
 func parse_moves(input string) []Move {
