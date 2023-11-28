@@ -5,9 +5,10 @@
     nixpkgs.url = "github:nixos/nixpkgs/23.05";
     unstable-nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    cakemix.url = "github:erikkrieg/cakemix";
   };
 
-  outputs = { flake-utils, nixpkgs, unstable-nixpkgs, ... }:
+  outputs = { flake-utils, nixpkgs, unstable-nixpkgs, cakemix, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         stable = import nixpkgs { inherit system; };
@@ -16,6 +17,7 @@
       with stable; {
         devShell = mkShell {
           buildInputs = [
+            cakemix.packages.${system}.default
             go
             gopls
             just
