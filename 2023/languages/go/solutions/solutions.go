@@ -6,7 +6,7 @@ import (
 
 type PuzzleFunc func()
 
-var puzzleSolutions [31]PuzzleFunc
+var puzzleSolutions [25]PuzzleFunc
 
 func Solve(day int) {
 	solution := puzzleSolutions[day-1]
