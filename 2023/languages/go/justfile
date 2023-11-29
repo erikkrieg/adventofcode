@@ -1,0 +1,11 @@
+# List available commands.
+list:
+  @just -l
+
+# Bootstrap a new puzzle. Expects DATE to be an int from 1 to 25.
+new DATE:
+  @curl "https://adventofcode.com/2023/day/{{DATE}}/input" \
+    -H "cookie: session=${SESSION}" \
+    --compressed \
+    -o inputs/day-{{DATE}}.txt
+  @echo {{ DATE }} | cakemix -o solutions template
