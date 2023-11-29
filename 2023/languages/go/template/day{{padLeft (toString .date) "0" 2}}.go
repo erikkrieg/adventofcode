@@ -3,7 +3,7 @@ package solutions
 import "fmt"
 
 func init() {
-	puzzleSolutions[{{.date}}] = day{{.date}}Solution
+	puzzleSolutions[{{sub (atoi .date) 1}}] = day{{.date}}Solution
 }
 
 func day{{.date}}Solution() {
