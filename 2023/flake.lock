@@ -7,11 +7,11 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1701234093,
-        "narHash": "sha256-RNCq6QjalGt8mK0DfBfASGi+6LOOqL+rJk0B/pZ1nEc=",
+        "lastModified": 1701236437,
+        "narHash": "sha256-OQsi7s0NgxKbqU26A0jIVGYinb+hvbnqSn4g+G2UMIk=",
         "owner": "erikkrieg",
         "repo": "cakemix",
-        "rev": "32d42c81929835561452e92f960b8d0c5bb4d144",
+        "rev": "71bcd7168dda2070856e6df2323cfb930b4b5f0c",
         "type": "github"
       },
       "original": {
