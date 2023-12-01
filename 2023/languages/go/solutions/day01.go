@@ -1,3 +1,5 @@
+// I'd like to refactor this so that I scan from the beginning and then end
+// of a line until a digit is found (close to my original part 1 solution).
 package solutions
 
 import (
@@ -63,44 +65,20 @@ func trebuchet(documents []string, digits []string) int {
 		first := len(doc)
 		last := -1
 		nums := [2]int{}
-		for _, d := range digits {
+		for v, d := range digits {
 			i := strings.Index(doc, d)
+			num := v%9 + 1
 			if i > -1 && i < first {
 				first = i
-				nums[0] = toInt(d)
+				nums[0] = num
 			}
 			i = strings.LastIndex(doc, d)
 			if i > last {
 				last = i
-				nums[1] = toInt(d)
+				nums[1] = num
 			}
 		}
 		sum += nums[0]*10 + nums[1]
 	}
 	return sum
-}
-
-func toInt(slice string) int {
-	var num int
-	switch slice {
-	case "one", "1":
-		num = 1
-	case "two", "2":
-		num = 2
-	case "three", "3":
-		num = 3
-	case "four", "4":
-		num = 4
-	case "five", "5":
-		num = 5
-	case "six", "6":
-		num = 6
-	case "seven", "7":
-		num = 7
-	case "eight", "8":
-		num = 8
-	case "nine", "9":
-		num = 9
-	}
-	return num
 }
