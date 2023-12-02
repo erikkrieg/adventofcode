@@ -8,7 +8,7 @@ import (
 	"github.com/erikkrieg/adventofcode/2023/pkg/input"
 )
 
-var day2Part1Test = []string{
+var day2Test = []string{
 	"Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green",
 	"Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue",
 	"Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red",
@@ -22,7 +22,8 @@ func init() {
 
 func day2Solution() {
 	fmt.Println("Day 2")
-	fmt.Printf(" Part 1: %d\n", day2Part1(&day2Part1Test))
+	fmt.Printf(" Part 1: %d\n", day2Part1(&day2Test))
+	fmt.Printf(" Part 2: %d\n", day2Part2(&day2Test))
 }
 
 func day2Part1(test *[]string) int {
@@ -46,8 +47,6 @@ func day2Part1(test *[]string) int {
 			for _, cube := range cubes {
 				c := strings.Split(strings.TrimSpace(cube), " ")
 				color := c[1]
-				fmt.Printf("%+v -> ", cube)
-				fmt.Printf("%+v len=%d\n", c, len(c))
 				count, err := strconv.Atoi(c[0])
 				if err != nil {
 					panic(err)
@@ -61,4 +60,37 @@ func day2Part1(test *[]string) int {
 		sum += id
 	}
 	return sum
+}
+
+func day2Part2(test *[]string) int {
+	games := input.Lines("day-2")
+	if useTestInput {
+		games = *test
+	}
+	minimumCubeSetPowerSum := 0
+	for _, game := range games {
+		minCubeSet := make(map[string]int)
+		trimmedGame := game[strings.IndexRune(game, ':')+1:]
+		sets := strings.Split(trimmedGame, ";")
+		for _, set := range sets {
+			cubes := strings.Split(set, ",")
+			for _, cube := range cubes {
+				c := strings.Split(strings.TrimSpace(cube), " ")
+				color := c[1]
+				count, err := strconv.Atoi(c[0])
+				if err != nil {
+					panic(err)
+				}
+				if count > minCubeSet[color] {
+					minCubeSet[color] = count
+				}
+			}
+		}
+		power := 1
+		for _, count := range minCubeSet {
+			power *= count
+		}
+		minimumCubeSetPowerSum += power
+	}
+	return minimumCubeSetPowerSum
 }
