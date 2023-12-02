@@ -17,5 +17,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	solutions.Solve(puzzleDay)
+	solutions.Solve(puzzleDay, os.Getenv("TEST") == "true")
 }
