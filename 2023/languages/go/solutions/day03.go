@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/erikkrieg/adventofcode/2023/pkg/input"
+	"github.com/erikkrieg/adventofcode/2023/pkg/lib"
 )
 
 var day3Test = []string{
@@ -52,14 +53,8 @@ func day3Part1(schematic []string) int {
 			}
 			if (!isDigit || x == len(s)-1) && num != "" {
 				isPart := false
-				xmin := x - len(num) - 1
-				if xmin < 0 {
-					xmin = 0
-				}
-				xmax := x + 1
-				if xmax > len(s) {
-					xmax -= 1
-				}
+				xmin := lib.Max(x-len(num)-1, 0)
+				xmax := lib.Min(x+1, len(s))
 				edges := []Edge{}
 				if y > 0 {
 					edge := Edge{y: y - 1, x: xmin, chars: schematic[y-1][xmin:xmax]}
