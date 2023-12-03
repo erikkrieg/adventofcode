@@ -16,11 +16,6 @@ var day3Test = []string{
 	"617*......",
 	".....+.58.",
 	"..592.....",
-	"..........",
-	".........+",
-	".........1",
-	"..........",
-	"..........",
 	"......755.",
 	"...$.*....",
 	".664.598..",
@@ -35,12 +30,19 @@ func day3Solution() {
 	fmt.Printf(" - Part 1: %d\n", day3Part1(day3Test))
 }
 
+type Edge struct {
+	y     int
+	x     int
+	chars string
+}
+
 func day3Part1(schematic []string) int {
 	digits := "0123456789"
 	if !useTestInput {
 		schematic = input.Lines("day-3")
 	}
 	partNumSum := 0
+	gears := make(map[int]map[int][]int)
 	for y, s := range schematic {
 		num := ""
 		for x, char := range s {
@@ -58,41 +60,59 @@ func day3Part1(schematic []string) int {
 				if xmax > len(s) {
 					xmax -= 1
 				}
-				around := []string{}
+				edges := []Edge{}
 				if y > 0 {
-					around = append(around, schematic[y-1][xmin:xmax])
+					edge := Edge{y: y - 1, x: xmin, chars: schematic[y-1][xmin:xmax]}
+					edges = append(edges, edge)
 				}
 				if y < len(schematic)-1 {
-					around = append(around, schematic[y+1][xmin:xmax])
+					edge := Edge{y: y + 1, x: xmin, chars: schematic[y+1][xmin:xmax]}
+					edges = append(edges, edge)
 				}
 				if xmin-1 > 0 {
-					around = append(around, s[xmin:xmin+1])
+					edge := Edge{y: y, x: xmin, chars: s[xmin : xmin+1]}
+					edges = append(edges, edge)
 				}
 				if xmax <= len(s) {
-					around = append(around, s[x:xmax])
+					edge := Edge{y: y, x: x, chars: s[x:xmax]}
+					edges = append(edges, edge)
 				}
-				fmt.Printf("xmin: %d, xmax: %d\n", xmin, xmax)
-				fmt.Printf("schema: %s -> around: %d %+v\n", num, len(around), around)
-				for _, side := range around {
+				n, err := strconv.Atoi(num)
+				if err != nil {
+					panic(err)
+				}
+				for _, e := range edges {
+					side := e.chars
 					if strings.ContainsAny(side, "!@#$%^&*-=+/:") {
+						gearX := strings.IndexRune(side, '*')
+						if gearX > -1 {
+							gearX += e.x
+							if _, ok := gears[e.y]; !ok {
+								gears[e.y] = make(map[int][]int)
+							}
+							gears[e.y][gearX] = append(gears[e.y][gearX], n)
+						}
 						isPart = true
 						break
 					}
 				}
 				if isPart {
-					fmt.Printf("Num: %s is a part\n\n", num)
-					n, err := strconv.Atoi(num)
-					if err != nil {
-						panic(err)
-					}
 					partNumSum += n
-				} else {
-					fmt.Println()
 				}
 				num = ""
 			}
 
 		}
 	}
-	return partNumSum
+	gearRatioSum := 0
+	for _, row := range gears {
+		for _, gear := range row {
+			if len(gear) == 2 {
+				gearRatioSum += gear[0] * gear[1]
+			}
+		}
+	}
+	// TODO: refactor so that part 1 and 2 can both be executed
+	// return partNumSum
+	return gearRatioSum
 }
