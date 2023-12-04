@@ -1,8 +1,18 @@
 package solutions
 
 import (
+	"fmt"
 	"log"
 )
+
+type Solution struct {
+	Part1 interface{}
+	Part2 interface{}
+}
+
+func (s Solution) Print() {
+	fmt.Printf("  - part 1: %v\n  - part 2: %v", s.Part1, s.Part2)
+}
 
 type PuzzleFunc func()
 

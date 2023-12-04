@@ -27,8 +27,8 @@ func init() {
 }
 
 func day3Solution() {
-	fmt.Println("Day 3")
-	fmt.Printf(" - Part 1: %d\n", day3Part1(day3Test))
+	fmt.Println("Day 3:")
+	day3Part1(day3Test).Print()
 }
 
 type Edge struct {
@@ -37,7 +37,7 @@ type Edge struct {
 	chars string
 }
 
-func day3Part1(schematic []string) int {
+func day3Part1(schematic []string) Solution {
 	digits := "0123456789"
 	if !useTestInput {
 		schematic = input.Lines("day-3")
@@ -107,7 +107,8 @@ func day3Part1(schematic []string) int {
 			}
 		}
 	}
-	// TODO: refactor so that part 1 and 2 can both be executed
-	// return partNumSum
-	return gearRatioSum
+	return Solution{
+		Part1: partNumSum,
+		Part2: gearRatioSum,
+	}
 }
