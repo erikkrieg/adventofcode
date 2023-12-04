@@ -13,3 +13,7 @@ func Min(a int, b int) int {
 	}
 	return a
 }
+
+func Abs(n int) int {
+	return Max(n, -n)
+}
