@@ -11,7 +11,7 @@ type Solution struct {
 }
 
 func (s Solution) Print() {
-	fmt.Printf("  - part 1: %v\n  - part 2: %v", s.Part1, s.Part2)
+	fmt.Printf("  - part 1: %v\n  - part 2: %v\n", s.Part1, s.Part2)
 }
 
 type PuzzleFunc func()
