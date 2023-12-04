@@ -1,0 +1,6 @@
+list:
+  @just -l
+
+run DATE:
+  @nix-instantiate --eval --expr 'import ./day_{{DATE}}.nix'
+
