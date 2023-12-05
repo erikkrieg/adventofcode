@@ -1,6 +1,11 @@
 list:
   @just -l
 
-run DATE:
-  @nix-instantiate --eval --expr 'import ./day_{{DATE}}.nix'
+run DATE TEST="false" DEBUG="false":
+  @DEBUG={{DEBUG}} TEST={{TEST}} nix-instantiate --eval --expr 'import ./day_{{DATE}}.nix'
 
+debug DATE TEST="false":
+  @just run {{DATE}} {{TEST}} true
+
+test DATE:
+  @just run {{DATE}} true true
