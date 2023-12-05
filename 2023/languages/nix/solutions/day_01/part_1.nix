@@ -3,7 +3,7 @@ let
   # Imports
   lib = import <nixpkgs/lib>;
 
-  # Functions:
+  # Functions
   inherit (lib.strings) toInt;
   debug = v: lib.traceIf ((getEnv "DEBUG") == "true") (deepSeq v v) v;
   lines = s: filter (x: (!isList x) && (x != "")) (split "\n" s);
