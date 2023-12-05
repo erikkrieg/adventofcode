@@ -1,11 +1,14 @@
 list:
   @just -l
 
-run DATE TEST="false" DEBUG="false":
-  @DEBUG={{DEBUG}} TEST={{TEST}} nix-instantiate --eval --expr 'import ./day_{{DATE}}.nix'
+# Evaluate select part of solution. Must be in solutions/day-n/ dir.
+run PART="1" TEST="false" DEBUG="false":
+  @DEBUG={{DEBUG}} TEST={{TEST}} nix-instantiate --eval --expr 'import {{invocation_directory()}}/part_{{PART}}.nix'
 
-debug DATE TEST="false":
-  @just run {{DATE}} {{TEST}} true
+# Same as [run] but with debug enabled.
+debug PART="1" TEST="false":
+  @cd {{invocation_directory()}} && just run {{PART}} {{TEST}} true
 
-test DATE:
-  @just run {{DATE}} true true
+# Same as [run] but with test and debug enabled.
+test PART="1":
+  @cd {{invocation_directory()}} && just run {{PART}} true true

@@ -20,7 +20,7 @@ let
     treb7uchet
   '';
 
-  inputs = lines (if test then test_input else readFile ./inputs/day-1.txt);
+  inputs = lines (if test then test_input else readFile ../../inputs/day-1.txt);
   digits = debug (map (x: toInt (head (firstDigit x) + head (lastDigit x))) inputs);
   result = sum digits;
 in
