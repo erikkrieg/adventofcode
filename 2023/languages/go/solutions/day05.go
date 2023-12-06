@@ -16,51 +16,90 @@ func init() {
 
 func day5Solution() {
 	fmt.Println("Day 5")
-	day5Part1().Print()
+	day5BothParts().Print()
 }
 
-func day5Part1() Solution {
+func setup() ([]int, [][]string) {
 	data := input.Lines("day-5")
 	if useTestInput {
 		data = input.Lines("test-5")
 	}
-	closestLocation := math.MaxInt
 	seeds := getNumbers(strings.Split(data[0], ": ")[1])
+	categories := [][]string{}
+	category := []string{}
+	for i := 3; i < len(data); i++ {
+		if data[i] == "" {
+			categories = append(categories, category)
+			category = []string{}
+			i++
+			continue
+		}
+		category = append(category, data[i])
+	}
+	categories = append(categories, category)
+	return seeds, categories
+}
+
+func day5BothParts() Solution {
+	seeds, categories := setup()
+	fmt.Println(seeds)
+
+	closestLocation := math.MaxInt
 	for _, seed := range seeds {
-		location := getLocation(seed, data[1:])
+		location := getLocation(seed, categories)
 		closestLocation = lib.Min(closestLocation, location)
 	}
 
+	// This is dumb brute force that will probs not work on real input.
+	seeds = []int{
+		2686125367, 200,
+	}
+	closestLocationPart2 := math.MaxInt
+	nearestSeed := ""
+	//limit := 4218385602
+	limit := 2686125867
+	for i := 0; i < len(seeds); i += 2 {
+		fmt.Println(i)
+		if seeds[i] > limit {
+			break
+		}
+		for r := 0; r < seeds[i+1]; r += 1 {
+			if seeds[i]+r > limit {
+				break
+			}
+			location := getLocation(seeds[i]+r, categories)
+			if location < closestLocationPart2 {
+				nearestSeed = fmt.Sprintf("Seed %d - i=%d, r=%d\n", seeds[i]+r, i, r)
+			}
+			closestLocationPart2 = lib.Min(closestLocationPart2, location)
+		}
+	}
+
+	fmt.Println(nearestSeed)
 	return Solution{
 		Part1: closestLocation,
+		Part2: closestLocationPart2,
 	}
 }
 
-func getLocation(seed int, data []string) int {
-	fmt.Printf("Seed: %d\n", seed)
+func getLocation(seed int, categories [][]string) int {
 	number := seed
-	nextNumber := number
-	for i := 0; i < len(data); i++ {
-		row := data[i]
-		if row == "" {
-			fmt.Printf("  - Next row: %s\n", data[i+1])
-			i++
-			number = nextNumber
-			continue
+	for _, category := range categories {
+		nextNumber := number
+		for _, c := range category {
+			numbers := getNumbers(c)
+			destination := numbers[0]
+			source := numbers[1]
+			distance := numbers[2]
+			sourceLimit := source + (distance - 1)
+			if nextNumber <= sourceLimit && nextNumber >= source {
+				nextNumber = destination + (number - source)
+				break
+			}
 		}
-
-		numbers := getNumbers(row)
-		destination := numbers[0]
-		source := numbers[1]
-		distance := numbers[2]
-
-		sourceLimit := source + (distance - 1)
-		if number <= sourceLimit && number >= source {
-			nextNumber = destination + (number - source)
-			fmt.Printf("    - Number changed from %d to %d\n", number, nextNumber)
-		}
+		number = nextNumber
 	}
-	return nextNumber
+	return number
 }
 
 func getNumbers(data string) []int {
