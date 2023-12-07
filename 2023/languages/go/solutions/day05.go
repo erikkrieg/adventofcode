@@ -19,7 +19,7 @@ func day5Solution() {
 	day5BothParts().Print()
 }
 
-func setup() ([]int, [][]string) {
+func day5Setup() ([]int, [][]string) {
 	data := input.Lines("day-5")
 	if useTestInput {
 		data = input.Lines("test-5")
@@ -41,7 +41,7 @@ func setup() ([]int, [][]string) {
 }
 
 func day5BothParts() Solution {
-	seeds, categories := setup()
+	seeds, categories := day5Setup()
 	fmt.Println(seeds)
 
 	closestLocation := math.MaxInt
