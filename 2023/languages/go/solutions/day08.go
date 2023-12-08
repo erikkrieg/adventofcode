@@ -23,12 +23,18 @@ func day8Solution() {
 	data := setupDay8()
 	network := parseNetwork(data)
 
+	Solution{
+		Part1: day8Part1(data[0], network),
+		Part2: nil,
+	}.Print()
+}
+
+func day8Part1(moves string, network Network) int {
 	node := "AAA"
-	moves := 0
-	size := len(data[0])
+	count := 0
+	size := len(moves)
 	for {
-		move := data[0][moves%size]
-		fmt.Printf("%d %s %s\n", moves, node, string(move))
+		move := moves[count%size]
 		if node == "ZZZ" {
 			break
 		}
@@ -37,13 +43,9 @@ func day8Solution() {
 			next = 1
 		}
 		node = network[node][next]
-		moves++
+		count++
 	}
-
-	Solution{
-		Part1: moves,
-		Part2: nil,
-	}.Print()
+	return count
 }
 
 type Network map[string][2]string
