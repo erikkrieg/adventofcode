@@ -10,22 +10,26 @@ func init() {
 	puzzleSolutions[7] = day8Solution
 }
 
-func setupDay8() []string {
+func setupDay8(part string) []string {
 	data := input.Lines("day-8")
 	if useTestInput {
-		data = input.Lines("test-8")
+		data = input.Lines("test-8." + part)
 	}
 	return data
 }
 
 func day8Solution() {
 	fmt.Println("Day 8")
-	data := setupDay8()
-	network := parseNetwork(data)
+	part1Data := setupDay8("1")
+	part2Data := setupDay8("2")
+
+	if try(part2Data[0], parseNetwork(part2Data)) == 1 {
+		return
+	}
 
 	Solution{
-		Part1: day8Part1(data[0], network),
-		Part2: nil,
+		Part1: day8Part1(part1Data[0], parseNetwork(part1Data)),
+		Part2: day8Part2(part2Data[0], parseNetwork(part2Data)),
 	}.Print()
 }
 
@@ -44,6 +48,90 @@ func day8Part1(moves string, network Network) int {
 		}
 		node = network[node][next]
 		count++
+	}
+	return count
+}
+
+func try(moves string, network Network) int {
+	// do these get into loops?
+	// if they get into loops, how often do they land on Z
+	// Is there a least common factor dynamic in this problem?
+	//
+	// So, if there is some eventual loop, then the time it takes the last thread to reach it might matter?
+	tailNodes := []string{}
+	visited := []map[string]bool{}
+	for node := range network {
+		if node[2] == 'A' {
+			tailNodes = append(tailNodes, node)
+			visited = append(visited, make(map[string]bool))
+		}
+	}
+
+	fmt.Printf("%+v\n", tailNodes)
+
+	size := len(moves)
+	count := 0
+	loopIntervals := make([]int, len(tailNodes))
+	skips := 0
+	for {
+		move := moves[count%size]
+		count++
+		if skips > len(tailNodes) {
+			break
+		}
+		for i, node := range tailNodes {
+			if loopIntervals[i] > 0 {
+				skips++
+				continue
+			}
+			skips = 0
+			key := fmt.Sprintf("%s-%d", node, count%size)
+			if visited[i][key] {
+				fmt.Printf("%d loop started at move: %d, pos: %s, key: %s\n", i, count, node, key)
+				loopIntervals[i] = count
+			} else {
+				visited[i][key] = true
+			}
+			next := 0
+			if move == 'R' {
+				next = 1
+			}
+			tailNodes[i] = network[node][next]
+		}
+	}
+
+	return 1
+}
+
+func day8Part2(moves string, network Network) int {
+	tailNodes := []string{}
+	for node := range network {
+		if node[2] == 'A' {
+			tailNodes = append(tailNodes, node)
+		}
+	}
+	size := len(moves)
+	count := 0
+	for {
+		move := moves[count%size]
+		for i, node := range tailNodes {
+			next := 0
+			if move == 'R' {
+				next = 1
+			}
+			tailNodes[i] = network[node][next]
+		}
+		count++
+		endInZ := true
+		for _, n := range tailNodes {
+			if n[2] != 'Z' {
+				endInZ = false
+				break
+			}
+		}
+		if endInZ {
+			break
+		}
 	}
 	return count
 }
