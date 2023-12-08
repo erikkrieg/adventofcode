@@ -1,15 +1,19 @@
 package solutions
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/erikkrieg/adventofcode/2023/pkg/input"
+)
 
 func init() {
 	puzzleSolutions[{{sub (atoi .date) 1}}] = day{{.date}}Solution
 }
 
 func setupDay{{.date}}() []string {
-	data := input.Lines("day-7")
+	data := input.Lines("day-{{.date}}")
 	if useTestInput {
-		data = input.Lines("test-7")
+		data = input.Lines("test-{{.date}}")
 	}
 	return data
 }
