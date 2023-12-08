@@ -21,7 +21,6 @@ func day7Solution() {
 		Part1: totalWinnings(sortHands(hands, false)),
 		Part2: totalWinnings(sortHands(hands, true)),
 	}.Print()
-
 }
 
 func day7Setup() []string {
