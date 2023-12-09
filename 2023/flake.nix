@@ -2,22 +2,23 @@
   description = "Declarative local dev environment";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/23.05";
-    unstable-nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/23.11";
     flake-utils.url = "github:numtide/flake-utils";
     cakemix.url = "github:erikkrieg/cakemix";
+    envim.url = "github:erikkrieg/envim";
+    envim.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { flake-utils, nixpkgs, unstable-nixpkgs, cakemix, ... }:
+  outputs = { flake-utils, nixpkgs, cakemix, envim, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        stable = import nixpkgs { inherit system; };
-        unstable = import unstable-nixpkgs { inherit system; };
+        pkgs = import nixpkgs { inherit system; };
       in
-      with stable; {
+      with pkgs; {
         devShell = mkShell {
           buildInputs = [
             cakemix.packages.${system}.default
+            envim.packages.${system}.default
             go
             gopls
             just
