@@ -2,10 +2,10 @@ package solutions
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/erikkrieg/adventofcode/2023/pkg/input"
+	"github.com/erikkrieg/adventofcode/2023/pkg/lib"
 )
 
 func init() {
@@ -29,22 +29,10 @@ func day9Solution() {
 	}.Print()
 }
 
-func parseValues(data string) []int {
-	values := []int{}
-	for _, d := range strings.Split(data, " ") {
-		v, err := strconv.Atoi(d)
-		if err != nil {
-			panic(err)
-		}
-		values = append(values, v)
-	}
-	return values
-}
-
 func day9part1(data []string) int {
 	sum := 0
 	for _, d := range data {
-		values := parseValues(d)
+		values := lib.Ints(strings.Split(d, " "))
 		sum += calculateNextValue(values)
 	}
 	return sum
@@ -53,7 +41,7 @@ func day9part1(data []string) int {
 func day9part2(data []string) int {
 	sum := 0
 	for _, d := range data {
-		values := parseValues(d)
+		values := lib.Ints(strings.Split(d, " "))
 		sum += calculatePrevValue(values)
 	}
 	return sum
