@@ -42,27 +42,19 @@ func parseValues(data string) []int {
 }
 
 func day9part1(data []string) int {
-	nextValues := make([]int, len(data))
-	for i, d := range data {
-		values := parseValues(d)
-		nextValues[i] = calculateNextValue(values)
-	}
 	sum := 0
-	for _, v := range nextValues {
-		sum += v
+	for _, d := range data {
+		values := parseValues(d)
+		sum += calculateNextValue(values)
 	}
 	return sum
 }
 
 func day9part2(data []string) int {
-	prevValues := make([]int, len(data))
-	for i, d := range data {
-		values := parseValues(d)
-		prevValues[i] = calculatePrevValue(values)
-	}
 	sum := 0
-	for _, v := range prevValues {
-		sum += v
+	for _, d := range data {
+		values := parseValues(d)
+		sum += calculatePrevValue(values)
 	}
 	return sum
 }
