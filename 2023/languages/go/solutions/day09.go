@@ -25,7 +25,7 @@ func day9Solution() {
 	data := setupDay9()
 	Solution{
 		Part1: day9part1(data),
-		Part2: nil,
+		Part2: day9part2(data),
 	}.Print()
 }
 
@@ -54,16 +54,21 @@ func day9part1(data []string) int {
 	return sum
 }
 
-func calculateNextValue(values []int) int {
-	differences := make([][]int, 0)
-	differences = append(differences, values)
-	for {
-		d, done := diff(differences[len(differences)-1])
-		differences = append(differences, d)
-		if done {
-			break
-		}
+func day9part2(data []string) int {
+	prevValues := make([]int, len(data))
+	for i, d := range data {
+		values := parseValues(d)
+		prevValues[i] = calculatePrevValue(values)
 	}
+	sum := 0
+	for _, v := range prevValues {
+		sum += v
+	}
+	return sum
+}
+
+func calculateNextValue(values []int) int {
+	differences := calcDiffs(values)
 	for i := len(differences) - 1; i > 0; i-- {
 		last := len(differences[i]) - 1
 		v := differences[i][last]
@@ -74,7 +79,30 @@ func calculateNextValue(values []int) int {
 	return differences[0][len(differences[0])-1]
 }
 
-func diff(values []int) ([]int, bool) {
+func calculatePrevValue(values []int) int {
+	differences := calcDiffs(values)
+	for i := len(differences) - 1; i > 0; i-- {
+		v := differences[i][0]
+		pv := differences[i-1][0]
+		differences[i-1] = append([]int{pv - v}, differences[i-1]...)
+	}
+	return differences[0][0]
+}
+
+func calcDiffs(values []int) [][]int {
+	differences := make([][]int, 0)
+	differences = append(differences, values)
+	for {
+		d, done := calcDiff(differences[len(differences)-1])
+		differences = append(differences, d)
+		if done {
+			break
+		}
+	}
+	return differences
+}
+
+func calcDiff(values []int) ([]int, bool) {
 	zeroCount := 0
 	d := make([]int, len(values)-1)
 	for i, v := range values {
