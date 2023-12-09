@@ -9,3 +9,11 @@ new DATE:
     --compressed \
     -o inputs/day-{{DATE}}.txt
   @echo {{ DATE }} | cakemix -o solutions template
+
+# Run solution for specified date.
+run DATE:
+  @go run . {{DATE}}
+
+# Run solution using test data.
+test DATE:
+  @TEST=true just run {{DATE}} 
