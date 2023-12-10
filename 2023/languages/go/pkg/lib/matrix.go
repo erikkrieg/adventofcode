@@ -4,6 +4,25 @@ type Point struct {
 	X, Y int
 }
 
+func (p *Point) Neighbors() []Point {
+	return []Point{
+		{X: p.X - 1, Y: p.Y},     // Left
+		{X: p.X - 1, Y: p.Y - 1}, // Top Left
+		{X: p.X - 1, Y: p.Y + 1}, // Bottom Left
+
+		{X: p.X + 1, Y: p.Y},     // Right
+		{X: p.X + 1, Y: p.Y + 1}, // Bottom Right
+		{X: p.X + 1, Y: p.Y - 1}, // Top Right
+
+		{X: p.X, Y: p.Y - 1}, // Top
+		{X: p.X, Y: p.Y + 1}, // Bottom
+	}
+}
+
+func (p *Point) InBounds(x, y int) bool {
+	return p.X > -1 && p.Y > -1 && p.X < x && p.Y < y
+}
+
 // Edge methods are designed around vertical and horizontal edges. Diagonal
 // points will not be able to use all Edge methods.
 type Edge struct {
