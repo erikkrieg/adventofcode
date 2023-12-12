@@ -24,17 +24,31 @@ func (g *Grid[comparable]) Value(point *Point) comparable {
 	return value
 }
 
-func (g *Grid[comparable]) Find(value comparable) *Point {
-	var point *Point
+func (g *Grid[comparable]) find(value comparable, all bool) []*Point {
+	var matches []*Point
 	for y, row := range g.Points {
 		for x, v := range row {
 			if v == value {
-				point = &Point{Y: y, X: x}
-				break
+				matches = append(matches, &Point{Y: y, X: x})
+				if !all {
+					return matches
+				}
 			}
 		}
 	}
-	return point
+	return matches
+}
+
+func (g *Grid[comparable]) FindAll(value comparable) []*Point {
+	return g.find(value, true)
+}
+
+func (g *Grid[comparable]) Find(value comparable) *Point {
+	matches := g.find(value, false)
+	if len(matches) == 0 {
+		return nil
+	}
+	return matches[0]
 }
 
 func (g *Grid[comparable]) relative(point *Point, dir *Point) *Point {

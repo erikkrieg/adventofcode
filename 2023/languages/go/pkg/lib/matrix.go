@@ -23,6 +23,11 @@ func (p *Point) InBounds(x, y int) bool {
 	return p.X > -1 && p.Y > -1 && p.X < x && p.Y < y
 }
 
+func (p *Point) Distance(other *Point) int {
+	edge := Edge{Start: *p, End: *other}
+	return edge.Len()
+}
+
 // Edge methods are designed around vertical and horizontal edges. Diagonal
 // points will not be able to use all Edge methods.
 type Edge struct {
