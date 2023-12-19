@@ -46,12 +46,12 @@ func day12Part1(data []string) int {
 	combos := 0
 	for _, d := range data {
 		springs, nums := parseSprings(d)
-		combos += rec(springs, nums)
+		combos += rec(springs, &nums)
 	}
 	return combos
 }
 
-func rec(springs string, nums []int) int {
+func rec(springs string, nums *[]int) int {
 	if !strings.Contains(springs, "?") {
 		out := 0
 		if validSprings(springs, nums) {
@@ -64,13 +64,13 @@ func rec(springs string, nums []int) int {
 	return rec(a, nums) + rec(b, nums)
 }
 
-func validSprings(str string, groups []int) bool {
+func validSprings(str string, groups *[]int) bool {
 	springs := strings.Fields(strings.ReplaceAll(str, ".", " "))
-	if len(springs) != len(groups) {
+	if len(springs) != len(*groups) {
 		return false
 	}
 	for i, s := range springs {
-		if len(s) != groups[i] {
+		if len(s) != (*groups)[i] {
 			return false
 		}
 	}
