@@ -6,11 +6,11 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/erikkrieg/adventofcode/2023/solutions"
+	"github.com/erikkrieg/adventofcode/2024/solutions"
 )
 
 func main() {
-	fmt.Println("AOC 2023")
+	fmt.Println("AOC 2024")
 
 	puzzleDay, err := strconv.Atoi(os.Args[1])
 	if err != nil {

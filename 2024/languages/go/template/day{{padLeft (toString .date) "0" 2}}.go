@@ -3,7 +3,7 @@ package solutions
 import (
 	"fmt"
 
-	"github.com/erikkrieg/adventofcode/2023/pkg/input"
+	"github.com/erikkrieg/adventofcode/2024/pkg/input"
 )
 
 func init() {
@@ -21,6 +21,7 @@ func setupDay{{.date}}() []string {
 func day{{.date}}Solution() {
 	fmt.Println("Day {{.date}}")
 	data := setupDay{{.date}}()
+	fmt.Printf("Data: %v\n", data)
 	Solution{
 		Part1: nil,
 		Part2: nil,
