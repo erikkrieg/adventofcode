@@ -3,7 +3,6 @@ package solutions
 import (
 	"fmt"
 	"sort"
-	"strconv"
 	"strings"
 
 	"github.com/erikkrieg/adventofcode/2024/pkg/input"
@@ -33,11 +32,12 @@ func day1Solution() {
 
 func day1Part1(data []string) int {
 	var distanceSum int
-	var left, right []int
-	for _, d := range data {
+	left := make([]int, len(data))
+	right := make([]int, len(data))
+	for i, d := range data {
 		fields := strings.Fields(d)
-		left = append(left, tryInt(fields[0]))
-		right = append(right, tryInt(fields[1]))
+		left[i] = lib.Atoi(fields[0])
+		right[i] = lib.Atoi(fields[1])
 	}
 	sort.Ints(left)
 	sort.Ints(right)
@@ -45,12 +45,4 @@ func day1Part1(data []string) int {
 		distanceSum += lib.Abs(left[i] - right[i])
 	}
 	return distanceSum
-}
-
-func tryInt(s string) int {
-	i, err := strconv.Atoi(s)
-	if err != nil {
-		panic(err)
-	}
-	return i
 }
