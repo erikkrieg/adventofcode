@@ -26,7 +26,7 @@ func day1Solution() {
 	data := setupDay1()
 	Solution{
 		Part1: day1Part1(data),
-		Part2: nil,
+		Part2: day1Part2(data),
 	}.Print()
 }
 
@@ -45,4 +45,19 @@ func day1Part1(data []string) int {
 		distanceSum += lib.Abs(left[i] - right[i])
 	}
 	return distanceSum
+}
+
+func day1Part2(data []string) int {
+	left := make([]int, len(data))
+	right := make(map[int]int)
+	for i, d := range data {
+		fields := strings.Fields(d)
+		left[i] = lib.Atoi(fields[0])
+		right[lib.Atoi(fields[1])] += 1
+	}
+	similarity := 0
+	for _, n := range left {
+		similarity += n * right[n]
+	}
+	return similarity
 }
