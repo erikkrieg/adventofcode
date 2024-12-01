@@ -2,6 +2,7 @@ package solutions
 
 import (
 	"fmt"
+	"math"
 	"strings"
 
 	"github.com/erikkrieg/adventofcode/2023/pkg/input"
@@ -50,13 +51,28 @@ func day20Solution() {
 
 	high := 0
 	low := 0
+	activeMachineAt := 0
 
-	for t := 0; t < 1000; t++ {
+Buttons:
+	for b := 0; b < math.MaxInt; b++ {
 		pulses := []PendingPulse{{signal: 0, input: "button", destination: "broadcaster"}}
 		for i := 0; i < len(pulses); i++ {
+			if pulses[i].destination == "rx" {
+				fmt.Printf("rx sig: %d, button press: %d\n", pulses[i].signal, b+1)
+				if pulses[i].signal == 0 {
+					return
+				}
+			}
 			if pulses[i].signal == 0 {
-				low++
-			} else {
+				if b < 1000 {
+					low++
+				}
+				if pulses[i].destination == "rx" && activeMachineAt == 0 {
+					activeMachineAt = b + 1
+					fmt.Println(b + 1)
+					break Buttons
+				}
+			} else if b < 1000 {
 				high++
 			}
 			if dest, ok := modules[pulses[i].destination]; ok {
@@ -71,7 +87,7 @@ func day20Solution() {
 
 	Solution{
 		Part1: low * high,
-		Part2: nil,
+		Part2: activeMachineAt,
 	}.Print()
 }
 
