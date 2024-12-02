@@ -40,3 +40,13 @@ func LCM(a, b int, integers ...int) int {
 func IntsLCM(ints ...int) int {
 	return LCM(ints[0], ints[1], ints[2:]...)
 }
+
+func Sign(n int) int {
+	if n == 0 {
+		return 0
+	}
+	if n < 0 {
+		return -1
+	}
+	return 1
+}
