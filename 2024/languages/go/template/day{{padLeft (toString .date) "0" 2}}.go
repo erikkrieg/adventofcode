@@ -6,24 +6,35 @@ import (
 	"github.com/erikkrieg/adventofcode/2024/pkg/input"
 )
 
-func init() {
-	puzzleSolutions[{{sub (atoi .date) 1}}] = day{{.date}}Solution
+type Day{{.date}} struct {
+	data []string
 }
 
-func setupDay{{.date}}() []string {
+func (d *Day{{.date}}) Setup() {
 	data := input.Lines("day-{{.date}}")
 	if useTestInput {
 		data = input.Lines("test-{{.date}}")
 	}
-	return data
+	d.data = data
 }
 
-func day{{.date}}Solution() {
+func (d *Day{{.date}}) Solve() {
 	fmt.Println("Day {{.date}}")
-	data := setupDay{{.date}}()
-	fmt.Printf("Data: %v\n", data)
+	d.Setup()
 	Solution{
-		Part1: nil,
-		Part2: nil,
+		Part1: d.Part1(),
+		Part2: d.Part2(),
 	}.Print()
+}
+
+func (d *Day{{.date}}) Part1() int {
+	return 0
+}
+
+func (d *Day{{.date}}) Part2() int {
+	return 0
+}
+
+func init() {
+	puzzleSolutions[{{sub (atoi .date) 1}}] = (&Day{{.date}}{}).Solve
 }
