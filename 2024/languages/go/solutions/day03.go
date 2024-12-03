@@ -42,7 +42,25 @@ func (d *Day3) Part1() int {
 }
 
 func (d *Day3) Part2() int {
-	return 0
+	productSum := 0
+	mulEnabled := true
+	for _, program := range d.data {
+		r, _ := regexp.Compile(`do\(\)|don't\(\)|mul\((\d*),(\d*)\)`)
+		matches := r.FindAllStringSubmatch(program, -1)
+		for _, m := range matches {
+			if m[0] == "do()" {
+				mulEnabled = true
+				continue
+			} else if m[0] == "don't()" {
+				mulEnabled = false
+				continue
+			}
+			if mulEnabled {
+				productSum += lib.Atoi(m[1]) * lib.Atoi(m[2])
+			}
+		}
+	}
+	return productSum
 }
 
 func init() {
