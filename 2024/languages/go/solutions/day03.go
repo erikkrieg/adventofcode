@@ -2,8 +2,10 @@ package solutions
 
 import (
 	"fmt"
+	"regexp"
 
 	"github.com/erikkrieg/adventofcode/2024/pkg/input"
+	"github.com/erikkrieg/adventofcode/2024/pkg/lib"
 )
 
 type Day3 struct {
@@ -28,7 +30,15 @@ func (d *Day3) Solve() {
 }
 
 func (d *Day3) Part1() int {
-	return 0
+	productSum := 0
+	for _, program := range d.data {
+		r, _ := regexp.Compile(`mul\((\d*),(\d*)\)`)
+		matches := r.FindAllStringSubmatch(program, -1)
+		for _, m := range matches {
+			productSum += lib.Atoi(m[1]) * lib.Atoi(m[2])
+		}
+	}
+	return productSum
 }
 
 func (d *Day3) Part2() int {
