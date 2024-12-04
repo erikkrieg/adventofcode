@@ -59,6 +59,10 @@ func (g *Grid[comparable]) relative(point *Point, dir *Point) *Point {
 	return p
 }
 
+func (g *Grid[comparable]) Relative(point *Point, dir *Point) *Point {
+	return g.relative(point, dir)
+}
+
 func (g *Grid[comparable]) Above(point *Point) *Point {
 	return g.relative(point, &Point{X: 0, Y: -1})
 }
