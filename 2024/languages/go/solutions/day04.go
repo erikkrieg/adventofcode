@@ -77,7 +77,34 @@ func (d *Day4) checkLine(current *lib.Point, delta *lib.Point) bool {
 }
 
 func (d *Day4) Part2() int {
-	return 0
+	directions := []lib.Point{
+		lib.Point{X: -1, Y: -1}, // Up & Left
+		lib.Point{X: 1, Y: -1},  // Up & Right
+		lib.Point{X: -1, Y: 1},  // Down & Left
+		lib.Point{X: 1, Y: 1},   // Down & Right
+	}
+	xmasOccurrences := 0
+	for _, x := range d.grid.FindAll('A') {
+		ul := d.grid.Relative(x, &directions[0])
+		ur := d.grid.Relative(x, &directions[1])
+		dl := d.grid.Relative(x, &directions[2])
+		dr := d.grid.Relative(x, &directions[3])
+		if ul == nil || ur == nil || dl == nil || dr == nil {
+			continue
+		}
+		ulv := d.grid.Value(ul)
+		urv := d.grid.Value(ur)
+		dlv := d.grid.Value(dl)
+		drv := d.grid.Value(dr)
+		if !(ulv == 'M' && drv == 'S' || ulv == 'S' && drv == 'M') {
+			continue
+		}
+		if !(urv == 'M' && dlv == 'S' || urv == 'S' && dlv == 'M') {
+			continue
+		}
+		xmasOccurrences += 1
+	}
+	return xmasOccurrences
 }
 
 func init() {
