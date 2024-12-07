@@ -4,18 +4,19 @@ import (
 	"fmt"
 
 	"github.com/erikkrieg/adventofcode/2024/pkg/input"
+	"github.com/erikkrieg/adventofcode/2024/pkg/lib"
 )
 
 type Day6 struct {
-	data []string
+	grid *lib.Grid[rune]
 }
 
 func (d *Day6) Setup() {
-	data := input.Lines("day-6")
+	grid := lib.NewGrid(input.LinesChars("day-6"))
 	if useTestInput {
-		data = input.Lines("test-6")
+		grid = lib.NewGrid(input.LinesChars("test-6"))
 	}
-	d.data = data
+	d.grid = grid
 }
 
 func (d *Day6) Solve() {
@@ -28,7 +29,28 @@ func (d *Day6) Solve() {
 }
 
 func (d *Day6) Part1() int {
-	return 0
+	directions := []*lib.Point{
+		&lib.Point{X: 0, Y: -1},
+		&lib.Point{X: 1, Y: 0},
+		&lib.Point{X: 0, Y: 1},
+		&lib.Point{X: -1, Y: 0},
+	}
+	guard := d.grid.Find('^')
+	guardDirIndex := 0
+	visited := make(map[string]bool)
+	for d.grid.Contains(guard) {
+		pointId := fmt.Sprintf("%d,%d", guard.X, guard.Y)
+		visited[pointId] = true
+		nextGuard := d.grid.Relative(guard, directions[guardDirIndex])
+		if nextGuard == nil {
+			break
+		} else if d.grid.Value(nextGuard) == '#' {
+			guardDirIndex = (guardDirIndex + 1) % 4
+			continue
+		}
+		guard = nextGuard
+	}
+	return len(visited)
 }
 
 func (d *Day6) Part2() int {
