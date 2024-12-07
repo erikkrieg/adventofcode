@@ -24,6 +24,11 @@ type PageOrderingRule struct {
 type PageOrderingRules map[int]*PageOrderingRule
 
 func (p *PageOrderingRules) isValidUpdate(pages []int) bool {
+	a, b := p.findFirstInvalid(pages)
+	return a == -1 && b == -1
+}
+
+func (p *PageOrderingRules) findFirstInvalid(pages []int) (int, int) {
 	rules := *p
 	updates := make(map[int]int, len(pages))
 	for i, p := range pages {
@@ -36,14 +41,27 @@ func (p *PageOrderingRules) isValidUpdate(pages []int) bool {
 		}
 		for checkPage, checkIndex := range updates {
 			if _, found := pageRules.InvalidBefore[checkPage]; v < checkIndex && found {
-				return false
+				return v, checkIndex
 			}
 			if _, found := pageRules.InvalidAfter[checkPage]; v > checkIndex && found {
-				return false
+				return v, checkIndex
 			}
 		}
 	}
-	return true
+	return -1, -1
+}
+
+func (p *PageOrderingRules) GetPageRule(pageNumber int) *PageOrderingRule {
+	pageRule, ok := (*p)[pageNumber]
+	if !ok {
+		pageRule = &PageOrderingRule{
+			PageNumber:    pageNumber,
+			InvalidBefore: make(map[int]bool),
+			InvalidAfter:  make(map[int]bool),
+		}
+		(*p)[pageNumber] = pageRule
+	}
+	return pageRule
 }
 
 func (d *Day5) Setup() {
@@ -61,19 +79,6 @@ func (d *Day5) Solve() {
 		Part1: d.Part1(),
 		Part2: d.Part2(),
 	}.Print()
-}
-
-func (p *PageOrderingRules) GetPageRule(pageNumber int) *PageOrderingRule {
-	pageRule, ok := (*p)[pageNumber]
-	if !ok {
-		pageRule = &PageOrderingRule{
-			PageNumber:    pageNumber,
-			InvalidBefore: make(map[int]bool),
-			InvalidAfter:  make(map[int]bool),
-		}
-		(*p)[pageNumber] = pageRule
-	}
-	return pageRule
 }
 
 func (d *Day5) Part1() int {
@@ -100,7 +105,35 @@ func (d *Day5) Part1() int {
 }
 
 func (d *Day5) Part2() int {
-	return 0
+	rules := make(PageOrderingRules)
+	doneParsingRules := false
+	midPageNumSum := 0
+	for _, line := range d.data {
+		if len(line) == 0 {
+			doneParsingRules = true
+			continue
+		}
+		if !doneParsingRules {
+			pages := lib.Ints(strings.Split(line, "|"))
+			rules.GetPageRule(pages[0]).InvalidAfter[pages[1]] = true
+			rules.GetPageRule(pages[1]).InvalidBefore[pages[0]] = true
+		} else {
+			pages := lib.Ints(strings.Split(line, ","))
+			invalidA, invalidB := rules.findFirstInvalid(pages)
+			if invalidA == -1 {
+				continue
+			}
+			for invalidA > -1 {
+				a := pages[invalidA]
+				b := pages[invalidB]
+				pages[invalidA] = b
+				pages[invalidB] = a
+				invalidA, invalidB = rules.findFirstInvalid(pages)
+			}
+			midPageNumSum += pages[len(pages)/2]
+		}
+	}
+	return midPageNumSum
 }
 
 func init() {
