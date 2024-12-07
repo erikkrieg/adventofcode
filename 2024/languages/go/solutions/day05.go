@@ -21,6 +21,31 @@ type PageOrderingRule struct {
 	InvalidAfter map[int]bool
 }
 
+type PageOrderingRules map[int]*PageOrderingRule
+
+func (p *PageOrderingRules) isValidUpdate(pages []int) bool {
+	rules := *p
+	updates := make(map[int]int, len(pages))
+	for i, p := range pages {
+		updates[p] = i
+	}
+	for k, v := range updates {
+		pageRules, ok := rules[k]
+		if !ok {
+			fmt.Errorf("Page %d has no page rules", k)
+		}
+		for checkPage, checkIndex := range updates {
+			if _, found := pageRules.InvalidBefore[checkPage]; v < checkIndex && found {
+				return false
+			}
+			if _, found := pageRules.InvalidAfter[checkPage]; v > checkIndex && found {
+				return false
+			}
+		}
+	}
+	return true
+}
+
 func (d *Day5) Setup() {
 	data := input.Lines("day-5")
 	if useTestInput {
@@ -38,24 +63,23 @@ func (d *Day5) Solve() {
 	}.Print()
 }
 
-func GetPageRule(pageRules *map[int]*PageOrderingRule, pageNumber int) *PageOrderingRule {
-	pageRule, ok := (*pageRules)[pageNumber]
+func (p *PageOrderingRules) GetPageRule(pageNumber int) *PageOrderingRule {
+	pageRule, ok := (*p)[pageNumber]
 	if !ok {
 		pageRule = &PageOrderingRule{
 			PageNumber:    pageNumber,
 			InvalidBefore: make(map[int]bool),
 			InvalidAfter:  make(map[int]bool),
 		}
-		(*pageRules)[pageNumber] = pageRule
+		(*p)[pageNumber] = pageRule
 	}
 	return pageRule
 }
 
 func (d *Day5) Part1() int {
-	rules := make(map[int]*PageOrderingRule)
+	rules := make(PageOrderingRules)
 	doneParsingRules := false
 	midPageNumSum := 0
-mainLoop:
 	for _, line := range d.data {
 		if len(line) == 0 {
 			doneParsingRules = true
@@ -63,29 +87,13 @@ mainLoop:
 		}
 		if !doneParsingRules {
 			pages := lib.Ints(strings.Split(line, "|"))
-			GetPageRule(&rules, pages[0]).InvalidAfter[pages[1]] = true
-			GetPageRule(&rules, pages[1]).InvalidBefore[pages[0]] = true
+			rules.GetPageRule(pages[0]).InvalidAfter[pages[1]] = true
+			rules.GetPageRule(pages[1]).InvalidBefore[pages[0]] = true
 		} else {
 			pages := lib.Ints(strings.Split(line, ","))
-			updates := make(map[int]int, len(pages))
-			for i, p := range pages {
-				updates[p] = i
+			if rules.isValidUpdate(pages) {
+				midPageNumSum += pages[len(pages)/2]
 			}
-			for k, v := range updates {
-				pageRules, ok := rules[k]
-				if !ok {
-					fmt.Errorf("Page %d has no page rules", k)
-				}
-				for checkPage, checkIndex := range updates {
-					if _, found := pageRules.InvalidBefore[checkPage]; v < checkIndex && found {
-						continue mainLoop
-					}
-					if _, found := pageRules.InvalidAfter[checkPage]; v > checkIndex && found {
-						continue mainLoop
-					}
-				}
-			}
-			midPageNumSum += pages[len(pages)/2]
 		}
 	}
 	return midPageNumSum
