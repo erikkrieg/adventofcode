@@ -29,19 +29,13 @@ func (d *Day6) Solve() {
 }
 
 func (d *Day6) Part1() int {
-	directions := []*lib.Point{
-		&lib.Point{X: 0, Y: -1},
-		&lib.Point{X: 1, Y: 0},
-		&lib.Point{X: 0, Y: 1},
-		&lib.Point{X: -1, Y: 0},
-	}
 	guard := d.grid.Find('^')
 	guardDirIndex := 0
 	visited := make(map[string]bool)
 	for d.grid.Contains(guard) {
 		pointId := fmt.Sprintf("%d,%d", guard.X, guard.Y)
 		visited[pointId] = true
-		nextGuard := d.grid.Relative(guard, directions[guardDirIndex])
+		nextGuard := d.grid.Relative(guard, lib.Directions[guardDirIndex])
 		if nextGuard == nil {
 			break
 		} else if d.grid.Value(nextGuard) == '#' {
@@ -54,6 +48,9 @@ func (d *Day6) Part1() int {
 }
 
 func (d *Day6) Part2() int {
+	// keep track of each visited point where the guard turned
+	// each time the guard is about to take a step (next step), check if placing
+	// a wall at that location would lead the guard to a previously visited turn point
 	return 0
 }
 

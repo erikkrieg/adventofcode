@@ -1,5 +1,13 @@
 package lib
 
+var (
+	Up    = &Point{X: 0, Y: -1}
+	Right = &Point{X: 1, Y: 0}
+	Down  = &Point{X: 0, Y: 1}
+	Left  = &Point{X: -1, Y: 0}
+)
+var Directions = []*Point{Up, Right, Down, Left}
+
 type Grid[T comparable] struct {
 	Points [][]T
 	MaxY   int
@@ -64,14 +72,14 @@ func (g *Grid[comparable]) Relative(point *Point, dir *Point) *Point {
 }
 
 func (g *Grid[comparable]) Above(point *Point) *Point {
-	return g.relative(point, &Point{X: 0, Y: -1})
+	return g.relative(point, Up)
 }
 func (g *Grid[comparable]) Below(point *Point) *Point {
-	return g.relative(point, &Point{X: 0, Y: 1})
+	return g.relative(point, Down)
 }
 
 func (g *Grid[comparable]) Left(point *Point) *Point {
-	return g.relative(point, &Point{X: -1, Y: 0})
+	return g.relative(point, Left)
 }
 
 func (g *Grid[comparable]) LeftAbove(point *Point) *Point {
@@ -83,7 +91,7 @@ func (g *Grid[comparable]) LeftBelow(point *Point) *Point {
 }
 
 func (g *Grid[comparable]) Right(point *Point) *Point {
-	return g.relative(point, &Point{X: 1, Y: 0})
+	return g.relative(point, Right)
 }
 
 func (g *Grid[comparable]) RightAbove(point *Point) *Point {
