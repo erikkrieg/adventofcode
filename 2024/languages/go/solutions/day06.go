@@ -48,10 +48,47 @@ func (d *Day6) Part1() int {
 }
 
 func (d *Day6) Part2() int {
-	// keep track of each visited point where the guard turned
-	// each time the guard is about to take a step (next step), check if placing
-	// a wall at that location would lead the guard to a previously visited turn point
-	return 0
+	guard := d.grid.Find('^')
+	guardDirIndex := 0
+	visited := make(map[string]bool)
+	loops := make(map[string]bool)
+	for d.grid.Contains(guard) {
+		pointId := fmt.Sprintf("%d,%d", guard.X, guard.Y)
+		visited[pointId] = true
+		nextGuard := d.grid.Relative(guard, lib.Directions[guardDirIndex])
+		if nextGuard == nil {
+			break
+		}
+		nextGuardId := fmt.Sprintf("%d,%d", nextGuard.X, nextGuard.Y)
+		if d.grid.Value(nextGuard) == '#' {
+			guardDirIndex = (guardDirIndex + 1) % 4
+			continue
+		} else if _, ok := visited[nextGuardId]; !ok {
+			checkIndex := (guardDirIndex + 1) % 4
+			check := &lib.Point{X: guard.X, Y: guard.Y}
+			checkVisited := make(map[string]bool)
+			for {
+				nextCheck := d.grid.Relative(check, lib.Directions[checkIndex])
+				if nextCheck == nil {
+					break
+				}
+				nextCheckId := fmt.Sprintf("%d,%d", nextCheck.X, nextCheck.Y)
+				checkIntersectId := fmt.Sprintf("%s:%d,%d", nextCheckId, check.X, check.Y)
+				if _, ok := checkVisited[checkIntersectId]; ok {
+					loops[nextGuardId] = true
+					break
+				}
+				if d.grid.Value(nextCheck) == '#' || nextGuardId == nextCheckId {
+					checkIndex = (checkIndex + 1) % 4
+					continue
+				}
+				checkVisited[checkIntersectId] = true
+				check = nextCheck
+			}
+		}
+		guard = nextGuard
+	}
+	return len(loops)
 }
 
 func init() {
