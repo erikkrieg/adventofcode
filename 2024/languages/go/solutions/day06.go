@@ -33,7 +33,7 @@ func (d *Day6) Part1() int {
 	guardDirIndex := 0
 	visited := make(map[string]bool)
 	for d.grid.Contains(guard) {
-		pointId := fmt.Sprintf("%d,%d", guard.X, guard.Y)
+		pointId := guard.Id()
 		visited[pointId] = true
 		nextGuard := d.grid.Relative(guard, lib.Directions[guardDirIndex])
 		if nextGuard == nil {
@@ -53,13 +53,13 @@ func (d *Day6) Part2() int {
 	visited := make(map[string]bool)
 	loops := make(map[string]bool)
 	for d.grid.Contains(guard) {
-		pointId := fmt.Sprintf("%d,%d", guard.X, guard.Y)
+		pointId := guard.Id()
 		visited[pointId] = true
 		nextGuard := d.grid.Relative(guard, lib.Directions[guardDirIndex])
 		if nextGuard == nil {
 			break
 		}
-		nextGuardId := fmt.Sprintf("%d,%d", nextGuard.X, nextGuard.Y)
+		nextGuardId := nextGuard.Id()
 		if d.grid.Value(nextGuard) == '#' {
 			guardDirIndex = (guardDirIndex + 1) % 4
 			continue
@@ -72,8 +72,8 @@ func (d *Day6) Part2() int {
 				if nextCheck == nil {
 					break
 				}
-				nextCheckId := fmt.Sprintf("%d,%d", nextCheck.X, nextCheck.Y)
-				checkIntersectId := fmt.Sprintf("%s:%d,%d", nextCheckId, check.X, check.Y)
+				nextCheckId := nextCheck.Id()
+				checkIntersectId := fmt.Sprintf("%s:%s", nextCheckId, check.Id())
 				if _, ok := checkVisited[checkIntersectId]; ok {
 					loops[nextGuardId] = true
 					break

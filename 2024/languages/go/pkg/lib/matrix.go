@@ -1,7 +1,13 @@
 package lib
 
+import "fmt"
+
 type Point struct {
 	X, Y int
+}
+
+func (p *Point) Id() string {
+	return fmt.Sprintf("%d,%d", p.X, p.Y)
 }
 
 func (p *Point) Neighbors() []Point {
