@@ -2,6 +2,7 @@ package solutions
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/erikkrieg/adventofcode/2024/pkg/input"
@@ -35,14 +36,27 @@ func (d *Day7) Part1() int {
 		splitLine := strings.Split(line, ": ")
 		testValue := lib.Atoi(splitLine[0])
 		numbers := lib.Ints(strings.Fields(splitLine[1]))
-		if d.evaluate(testValue, numbers[0], numbers[1:]) {
+		if d.evaluate(testValue, numbers[0], numbers[1:], false) {
 			validTestValueSum += testValue
 		}
 	}
 	return validTestValueSum
 }
 
-func (d *Day7) evaluate(testValue, currentValue int, remainingNumbers []int) bool {
+func (d *Day7) Part2() int {
+	validTestValueSum := 0
+	for _, line := range d.data {
+		splitLine := strings.Split(line, ": ")
+		testValue := lib.Atoi(splitLine[0])
+		numbers := lib.Ints(strings.Fields(splitLine[1]))
+		if d.evaluate(testValue, numbers[0], numbers[1:], true) {
+			validTestValueSum += testValue
+		}
+	}
+	return validTestValueSum
+}
+
+func (d *Day7) evaluate(testValue, currentValue int, remainingNumbers []int, includeConcat bool) bool {
 	if len(remainingNumbers) == 0 {
 		return testValue == currentValue
 	}
@@ -52,15 +66,15 @@ func (d *Day7) evaluate(testValue, currentValue int, remainingNumbers []int) boo
 		return false
 	}
 	next := remainingNumbers[0]
-	nextAdd := currentValue + next
-	nextMul := currentValue * next
 	rest := remainingNumbers[1:]
-	return d.evaluate(testValue, nextAdd, rest) || d.evaluate(testValue, nextMul, rest)
-
-}
-
-func (d *Day7) Part2() int {
-	return 0
+	evalAdd := d.evaluate(testValue, currentValue+next, rest, includeConcat)
+	evalMul := d.evaluate(testValue, currentValue*next, rest, includeConcat)
+	if !includeConcat {
+		return evalAdd || evalMul
+	}
+	nextConcatValue := lib.Atoi(strconv.Itoa(currentValue) + strconv.Itoa(next))
+	evalConcat := d.evaluate(testValue, nextConcatValue, rest, includeConcat)
+	return evalAdd || evalMul || evalConcat
 }
 
 func init() {
