@@ -1,3 +1,3 @@
-module github.com/erikkrieg/adventofcode/2024
+module github.com/erikkrieg/adventofcode/2025
 
-go 1.23.3
+go 1.24.3

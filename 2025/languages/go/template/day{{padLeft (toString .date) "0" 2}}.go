@@ -3,7 +3,7 @@ package solutions
 import (
 	"fmt"
 
-	"github.com/erikkrieg/adventofcode/2024/pkg/input"
+	"github.com/erikkrieg/adventofcode/2025/pkg/input"
 )
 
 type Day{{.date}} struct {
