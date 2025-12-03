@@ -2,9 +2,10 @@
   description = "Declarative local dev environment";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/25.11";
+    nixpkgs.url = "github:nixos/nixpkgs/25.05";
     flake-utils.url = "github:numtide/flake-utils";
     cakemix.url = "github:erikkrieg/cakemix";
+    cakemix.inputs.nixpkgs.follows = "nixpkgs";
     envim.url = "github:erikkrieg/envim";
     envim.inputs.nixpkgs.follows = "nixpkgs";
   };
